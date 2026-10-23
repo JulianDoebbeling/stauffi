@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Stauffacher 52</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: desktop = three columns on one screen (Info | Tag + Plan + Übersicht | Buchen). Phone = one column, info first. */
+:root{
+  --bg:#ffffff; --fg:#141414; --muted:#6b6b72; --faint:#9c9ca4; --line:#e6e6ea; --soft:#f5f5f7;
+  --accent:#2742c7; --accent-soft:#e8ecfb; --taken:#d6d6dc; --part:#c9d2f5;
+  --ok:#1f7a4a; --ok-soft:#e5f3eb; --off:#a3342b; --off-soft:#f8e9e7; --warn:#8a5200; --warn-soft:#fdf3e1;
+  --sofa:#efe9e1; --sofa-line:#8f8172;
+  --sans:"Geist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#111113; --fg:#ececee; --muted:#9a9aa2; --faint:#6c6c74; --line:#2a2a2f; --soft:#1a1a1e;
+  --accent:#8ea0ff; --accent-soft:#232a4a; --taken:#3a3a41; --part:#2f3866;
+  --ok:#5fcf8f; --ok-soft:#16291e; --off:#f08a80; --off-soft:#331b19; --warn:#f0b75a; --warn-soft:#3a2d14;
+  --sofa:#2a2622; --sofa-line:#a89a8a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111113; --fg:#ececee; --muted:#9a9aa2; --faint:#6c6c74; --line:#2a2a2f; --soft:#1a1a1e;
+  --accent:#8ea0ff; --accent-soft:#232a4a; --taken:#3a3a41; --part:#2f3866;
+  --ok:#5fcf8f; --ok-soft:#16291e; --off:#f08a80; --off-soft:#331b19; --warn:#f0b75a; --warn-soft:#3a2d14;
+  --sofa:#2a2622; --sofa-line:#a89a8a; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 var(--sans);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1{font-size:1.375rem;font-weight:600;margin:0;letter-spacing:-.015em}
+h2{font:500 .6875rem/1 var(--mono);text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin:0}
+h3{font-size:.9375rem;font-weight:600;margin:0}
+p{margin:0}
+.muted{color:var(--muted)}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ---------- layout ---------- */
+.app{max-width:1400px;margin:0 auto;padding-block:28px 48px;display:grid;gap:28px;grid-template-columns:minmax(0,1fr)}
+.col{display:flex;flex-direction:column;gap:20px;min-width:0}
+@media (min-width:1080px){
+  html,body{height:100%}
+  .app{grid-template-columns:290px minmax(0,1fr) 330px;gap:32px;align-items:start;min-height:100%;padding-block:28px}
+  .col.side{position:sticky;top:28px}
+}
+
+/* ---------- info column ---------- */
+.brand{display:flex;flex-direction:column;gap:4px}
+.card{border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.coffee{background:var(--soft);border-color:transparent}
+.coffee.on{background:var(--ok-soft)}
+.coffee.off{background:var(--off-soft)}
+.coffee-now{display:flex;align-items:center;gap:10px}
+.pulse{width:12px;height:12px;border-radius:50%;flex:none;background:var(--muted)}
+.coffee.on .pulse{background:var(--ok);box-shadow:0 0 0 4px color-mix(in srgb,var(--ok) 22%,transparent)}
+.coffee.off .pulse{background:var(--off)}
+.coffee-state{font-size:1.125rem;font-weight:600;line-height:1.25}
+.coffee-next{font-size:.875rem;color:var(--muted)}
+.windows{display:flex;gap:6px;flex-wrap:wrap}
+.win{font:500 .8125rem var(--mono);padding:4px 9px;border-radius:6px;background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+.win.cur{border-color:var(--ok);color:var(--ok)}
+.facts{display:grid;grid-template-columns:4.5rem 1fr;gap:4px 12px;margin:0;font-size:.875rem}
+.facts dt{color:var(--muted)} .facts dd{margin:0;min-width:0}
+.rules{border-color:var(--warn-soft);background:var(--warn-soft)}
+.rules h2{color:var(--warn)}
+.rules ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;font-size:.875rem}
+.rules li{display:grid;grid-template-columns:4.5rem 1fr;gap:12px}
+.rules b{font-weight:600;color:var(--warn)}
+.foot{font-size:.75rem;color:var(--muted)}
+
+/* ---------- booking column ---------- */
+.step-head{display:flex;align-items:baseline;gap:10px;margin-bottom:10px}
+.step-no{font:500 .75rem var(--mono);color:var(--faint)}
+.step-sub{font-size:.8125rem;color:var(--muted);margin-left:auto;text-align:right}
+.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.day{display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 4px;border:1px solid var(--line);
+  border-radius:8px;background:var(--bg);cursor:pointer;min-width:0}
+.day .wd{font:500 .6875rem var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.day .dn{font:500 1.0625rem/1.2 var(--mono)}
+.day .ds{font-size:.6875rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.day[aria-pressed="true"]{border-color:var(--fg);background:var(--fg);color:var(--bg)}
+.day[aria-pressed="true"] .wd,.day[aria-pressed="true"] .ds{color:var(--bg);opacity:.75}
+.day:disabled{cursor:default;background:var(--soft);color:var(--faint);border-color:transparent}
+.day:disabled .wd,.day:disabled .ds{color:var(--faint)}
+.day.today .dn{text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:2px}
+
+.plan{border:1px solid var(--line);border-radius:12px;background:var(--soft);padding:10px 12px}
+.plan svg{display:block;width:100%;height:auto;max-height:min(46vh,380px);margin:0 auto}
+.tbl{fill:var(--bg);stroke:var(--fg);stroke-width:1.5}
+.tbl-label{fill:var(--faint);font:400 14px var(--mono)}
+.spot{cursor:pointer}
+.spot .shape{fill:var(--bg);stroke:var(--fg);stroke-width:1.5}
+.spot .lab{fill:var(--fg);font:500 17px var(--mono);pointer-events:none}
+.spot.part .shape{fill:var(--part);stroke:var(--part)}
+.spot.full .shape{fill:var(--taken);stroke:var(--taken)}
+.spot.full .lab{fill:var(--muted)}
+.spot.mine .shape{fill:var(--accent);stroke:var(--accent)}
+.spot.mine .lab{fill:var(--bg)}
+.spot.sel .shape{stroke:var(--accent);stroke-width:3.5}
+.spot.locked{cursor:not-allowed}
+.spot.locked .shape{fill:var(--soft);stroke:var(--line);stroke-dasharray:4 3}
+.spot:focus{outline:none}
+.spot:focus-visible .shape{stroke:var(--accent);stroke-width:3.5}
+/* sofa: frame stays sofa-coloured, cushions carry the booking state */
+.sofa .frame{fill:var(--sofa);stroke:var(--sofa-line);stroke-width:1.5}
+.sofa .shape{fill:var(--bg);stroke:var(--sofa-line);stroke-width:1.2}
+.sofa .seam{stroke:var(--sofa-line);stroke-width:1;opacity:.5}
+.sofa .lab{font:500 14px var(--mono)}
+.sofa.sel .frame,.sofa:focus-visible .frame{stroke:var(--accent);stroke-width:3}
+.sofa.sel .shape{stroke:var(--sofa-line);stroke-width:1.2}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.75rem;color:var(--muted);padding:6px 2px 0}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px;border:1.5px solid var(--fg)}
+
+.grid{overflow-x:auto}
+.grid-inner{min-width:300px;display:flex;flex-direction:column;gap:3px}
+.g-row{display:grid;grid-template-columns:4.25rem 1fr;align-items:center;gap:8px}
+.g-lab{font:500 .75rem var(--mono)}
+.g-track{position:relative;height:15px;background:var(--soft);border-radius:3px;
+  background-image:repeating-linear-gradient(90deg,transparent 0,transparent calc(100%/9 - 1px),var(--line) calc(100%/9 - 1px),var(--line) calc(100%/9))}
+.g-bar{position:absolute;top:0;bottom:0;background:var(--taken);border-radius:3px;font:400 10px/15px var(--sans);padding:0 4px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.g-bar.mine{background:var(--accent);color:var(--bg)}
+.g-axis{display:grid;grid-template-columns:4.25rem 1fr;gap:8px;font:400 .6875rem var(--mono);color:var(--muted);margin-bottom:2px}
+.g-axis div:last-child{display:flex;justify-content:space-between}
+
+/* ---------- side column ---------- */
+.panel{border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:13px}
+.panel[aria-disabled="true"] .field,.panel[aria-disabled="true"] .btn{opacity:.5}
+.panel-title{display:flex;flex-direction:column;gap:2px}
+.slots{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:400 .8125rem var(--mono);padding:3px 8px;border-radius:999px;background:var(--soft);color:var(--muted)}
+.chip.mine{background:var(--accent-soft);color:var(--accent)}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label,.field .lbl{font-size:.8125rem;color:var(--muted)}
+.row2{display:flex;gap:8px;align-items:center}
+.row2 select{flex:1}
+input[type=text],select{font:inherit;padding:9px 11px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg);min-width:0}
+input[type=text]{width:100%}
+select{font-family:var(--mono)}
+.btn{font:500 .9375rem var(--sans);padding:10px 16px;border-radius:6px;border:1px solid var(--fg);background:var(--fg);color:var(--bg);cursor:pointer}
+.btn.ghost{background:none;color:var(--fg);border-color:var(--line)}
+.btn.small{font-size:.8125rem;padding:3px 10px}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.wide{width:100%}
+.status{font-size:.875rem;min-height:1.4em}
+.status:empty{display:none}
+.note{font-size:.8125rem;padding:8px 10px;border-radius:6px;background:var(--warn-soft);color:var(--warn)}
+.list{border-top:1px solid var(--line)}
+.item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:.875rem}
+.item > span{min-width:0}
+
+/* ---------- dialog ---------- */
+dialog{border:1px solid var(--line);border-radius:12px;padding:22px;max-width:min(420px,calc(100vw - 32px));background:var(--bg);color:var(--fg)}
+dialog::backdrop{background:rgba(10,10,14,.45)}
+dialog h3{font-size:1.0625rem;margin-bottom:8px}
+dialog p{color:var(--muted)}
+.dlg-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;flex-wrap:wrap}
+
+@media (max-width:480px){
+  .day{padding:7px 2px} .day .dn{font-size:1rem} .day .ds{display:none}
+}
+@media (prefers-reduced-motion:no-preference){.spot .shape{transition:fill .15s,stroke .15s}}
+</style>
+</head>
+<body>
+<main class="app">
+
+  <!-- ===== Info ===== -->
+  <aside class="col info">
+    <div class="brand">
+      <h1>Stauffacher 52</h1>
+      <p class="muted">Homeoffice in Zürich Wiedikon. Freunde dürfen vorbeikommen und hier arbeiten.</p>
+      <p class="mono" style="font-size:.8125rem">Stauffacherstrasse 52, Zürich</p>
+    </div>
+
+    <section class="card coffee" id="coffee" aria-labelledby="h-coffee">
+      <h2 id="h-coffee">Kaffee</h2>
+      <div class="coffee-now">
+        <span class="pulse" aria-hidden="true"></span>
+        <div>
+          <p class="coffee-state" id="coffeeState">Maschine …</p>
+          <p class="coffee-next" id="coffeeNext"></p>
+        </div>
+      </div>
+      <div class="windows" aria-label="Betriebszeiten">
+        <span class="win" id="w1">09:00–12:00</span>
+        <span class="win" id="w2">13:00–16:30</span>
+      </div>
+      <dl class="facts">
+        <dt>Maschine</dt><dd>Rocket R58 Tune</dd>
+        <dt>Bohnen</dt><dd>Specialty Coffee aus Indien oder Honduras</dd>
+        <dt>Milch</dt><dd>Nur Proteinmilch. Eigene Milch darfst du mitbringen.</dd>
+      </dl>
+    </section>
+
+    <section class="card rules" aria-labelledby="h-rules">
+      <h2 id="h-rules">Hausregeln</h2>
+      <ul>
+        <li><b>Zeiten</b><span>Nur die aktuelle Woche, 09:00–18:00, höchstens 8 Stunden am Stück.</span></li>
+        <li><b>Montag</b><span>Ausgebucht, Julian ist in Bern.</span></li>
+        <li><b>Sofa</b><span>Nur Sandro Ganter, Nap von höchstens 1 Stunde.</span></li>
+        <li><b>Tim</b><span>Für Tim Wünsch gilt Hausverbot bei unangekündigten Besuchen oder mehr als 30 Minuten Verspätung.</span></li>
+      </ul>
+    </section>
+
+    <p class="foot">Buchungen sind für alle sichtbar. Stornieren kannst du nur auf dem Gerät, mit dem du gebucht hast.</p>
+  </aside>
+
+  <!-- ===== Tag + Plan ===== -->
+  <section class="col" aria-labelledby="h-book">
+    <h2 id="h-book" class="sr" style="position:absolute;left:-9999px">Platz buchen</h2>
+    <div>
+      <div class="step-head"><span class="step-no">1</span><h3>Tag</h3><span class="step-sub" id="weekLabel"></span></div>
+      <div class="week" id="week" role="group" aria-label="Tag in dieser Woche wählen"></div>
+    </div>
+
+    <div>
+      <div class="step-head"><span class="step-no">2</span><h3>Platz</h3><span class="step-sub">Platz oder Sofa antippen</span></div>
+      <div class="plan">
+        <svg viewBox="0 -8 560 338" role="group" aria-label="Raumplan mit Tisch, sechs Plätzen und Sofa">
+          <rect class="tbl" x="120" y="62" width="280" height="100" rx="4"/>
+          <text class="tbl-label" x="260" y="117" text-anchor="middle">Tisch</text>
+          <g id="spots"></g>
+        </svg>
+        <div class="legend">
+          <span><i style="background:var(--bg)"></i>frei</span>
+          <span><i style="background:var(--part);border-color:var(--part)"></i>teilweise gebucht</span>
+          <span><i style="background:var(--taken);border-color:var(--taken)"></i>ganzer Tag weg</span>
+          <span><i style="background:var(--accent);border-color:var(--accent)"></i>deine Buchung</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="step-head"><h3 style="font-weight:500" class="muted">Übersicht <span id="dayName"></span></h3></div>
+      <div class="grid"><div class="grid-inner" id="grid"></div></div>
+      <div class="list" id="dayList" hidden style="margin-top:12px"></div>
+    </div>
+  </section>
+
+  <!-- ===== Buchen ===== -->
+  <section class="col side" aria-label="Buchen">
+    <div>
+      <div class="step-head"><span class="step-no">3</span><h3>Zeit und Name</h3></div>
+      <div class="panel" id="panel" aria-disabled="true">
+        <div class="panel-title">
+          <strong id="panelTitle">Noch kein Platz gewählt</strong>
+          <span class="muted" style="font-size:.8125rem" id="panelRule">Wähl links einen Platz oder das Sofa.</span>
+        </div>
+        <div class="field">
+          <span class="lbl">Schon gebucht</span>
+          <div class="slots" id="slots"></div>
+        </div>
+        <div class="field">
+          <label for="name">Dein Name</label>
+          <input type="text" id="name" maxlength="40" placeholder="Vorname Nachname" autocomplete="name">
+        </div>
+        <div class="field">
+          <label for="from">Zeit</label>
+          <div class="row2">
+            <select id="from" aria-label="Von"></select>
+            <span class="muted">bis</span>
+            <select id="to" aria-label="Bis"></select>
+          </div>
+        </div>
+        <p class="note" id="sofaNote" hidden>Das Sofa ist für Sandro reserviert, für einen Nap von höchstens 1 Stunde.</p>
+        <button class="btn wide" id="book" disabled>Buchen</button>
+        <p class="status" id="status" role="status"></p>
+      </div>
+    </div>
+
+    <div id="mineSection" hidden>
+      <div class="step-head"><h3>Deine Buchungen</h3></div>
+      <div class="list" id="mineList"></div>
+    </div>
+  </section>
+</main>
+
+<dialog id="dlg" aria-labelledby="dlgTitle">
+  <h3 id="dlgTitle"></h3>
+  <p id="dlgText"></p>
+  <div class="dlg-actions" id="dlgActions"></div>
+</dialog>
+
+<script>
+// ---- Supabase (Project Settings → API) ----
+const SUPABASE_URL = "https://btgzepbllyughyfjwuve.supabase.co";
+const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
+// --------------------------------------------
+
+(function(){
+  const SPOTS=[
+    {id:"1",x:200,y:24,r:27},{id:"2",x:320,y:24,r:27},
+    {id:"3",x:446,y:112,r:27},
+    {id:"4",x:320,y:200,r:27},{id:"5",x:200,y:200,r:27},
+    {id:"6",x:74,y:112,r:27},
+    {id:"sofa",x:330,y:246,w:200,h:76}];
+  const OPEN=540,CLOSE=1080,STEP=30,MAX_SEAT=480,MAX_SOFA=60;
+  const WD=["Mo","Di","Mi","Do","Fr","Sa","So"];
+  const tz="Europe/Zurich";
+  const $=s=>document.getElementById(s);
+  const isSandro=n=>/sandro/i.test(n);
+  const isTim=n=>/tim/i.test(n);
+
+  // ---------- helpers ----------
+  const fmt=m=>String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0");
+  const lbl=k=>k==="sofa"?"Sofa":"Platz "+k;
+  function zNow(){const p=new Intl.DateTimeFormat("en-CA",{timeZone:tz,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}).formatToParts(new Date());
+    const g=t=>p.find(x=>x.type===t).value;return{ymd:g("year")+"-"+g("month")+"-"+g("day"),min:(+g("hour")%24)*60+ +g("minute")}}
+  const toDate=s=>{const[y,m,d]=s.split("-").map(Number);return new Date(Date.UTC(y,m-1,d))};
+  const toYmd=d=>d.toISOString().slice(0,10);
+  const addDays=(s,n)=>{const d=toDate(s);d.setUTCDate(d.getUTCDate()+n);return toYmd(d)};
+  const isoDow=s=>((toDate(s).getUTCDay()+6)%7)+1;
+  const dm=s=>{const d=toDate(s);return d.getUTCDate()+"."+(d.getUTCMonth()+1)+"."};
+  function getStore(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v??d}catch(e){return d}}
+  function setStore(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+
+  // ---------- state ----------
+  const today=zNow().ymd;
+  const monday=addDays(today,1-isoDow(today));
+  const week=[...Array(7)].map((_,i)=>addDays(monday,i));
+  let day=week.find(d=>d>=today&&isoDow(d)!==1)||null;
+  let sel=null,list=[],weekList=[],loaded=false,adminKey=null;
+  let mine=getStore("s52tokens",{});
+  const isMine=b=>!!mine[b.id];
+  try{const n=localStorage.getItem("s52name");if(n)$("name").value=n}catch(e){}
+
+  // ---------- api ----------
+  const H={"apikey":SUPABASE_KEY,"Content-Type":"application/json"};
+  async function api(path,opts){
+    const r=await fetch(SUPABASE_URL+"/rest/v1/"+path,Object.assign({headers:H},opts));
+    const t=await r.text();const j=t?JSON.parse(t):null;
+    if(!r.ok)throw j||{message:r.statusText};return j;
+  }
+  const rpc=(fn,args)=>api("rpc/"+fn,{method:"POST",body:JSON.stringify(args)});
+  function errText(e){
+    const m=((e&&e.message)||"")+" "+((e&&e.details)||"");
+    if(m.includes("no_overlap"))return"Dieser Platz ist in dieser Zeit schon gebucht.";
+    if(m.includes("sofa_sandro"))return"Das Sofa ist nur für Sandro.";
+    if(m.includes("max_length"))return sel==="sofa"?"Ein Nap dauert höchstens 1 Stunde.":"Höchstens 8 Stunden am Stück.";
+    if(m.includes("opening_hours"))return"Buchbar ist nur zwischen 09:00 und 18:00.";
+    if(m.includes("not_monday")||m.includes("Montag"))return"Montags ist alles ausgebucht, Julian ist in Bern.";
+    if(m.includes("Woche"))return"Buchbar ist nur die aktuelle Woche.";
+    return"Das hat nicht geklappt. Prüf deine Verbindung und versuch es nochmal.";
+  }
+
+  // ---------- dialog ----------
+  function ask(title,text,buttons){
+    return new Promise(res=>{
+      const d=$("dlg");$("dlgTitle").textContent=title;$("dlgText").textContent=text;
+      const a=$("dlgActions");a.textContent="";
+      buttons.forEach(b=>{const x=document.createElement("button");x.className="btn"+(b.primary?"":" ghost");x.textContent=b.label;
+        x.onclick=()=>{d.close();res(b.value)};a.appendChild(x)});
+      d.onclose=()=>res(null);
+      if(d.showModal)d.showModal();else{alert(title+"\n\n"+text);res(buttons[buttons.length-1].value)}
+      const p=a.querySelector(".btn:not(.ghost)")||a.firstChild;if(p)p.focus();
+    });
+  }
+  const sofaPopup=()=>ask("Das Sofa ist für Sandro reserviert",
+    "Nur Sandro Ganter kann das Sofa für einen Nap von höchstens 1 Stunde buchen. Trag deinen Namen ein oder wähl einen Platz am Tisch.",
+    [{label:"Verstanden",value:true,primary:true}]);
+  const timPopup=()=>ask("Hallo Tim",
+    "Bitte sei pünktlich. Bei unangekündigten Besuchen oder mehr als 30 Minuten Verspätung gilt Hausverbot.",
+    [{label:"Abbrechen",value:false},{label:"Ich bin pünktlich, buchen",value:true,primary:true}]);
+
+  // ---------- data helpers ----------
+  const forSpot=(k,src)=>(src||list).filter(b=>b.seat===k).sort((a,b)=>a.start_min-b.start_min);
+  function covered(bs,limit){let t=OPEN;for(const b of bs){if(b.start_min>t)return false;t=Math.max(t,b.end_min)}return t>=CLOSE}
+  function earliest(){return day===today?Math.max(OPEN,Math.ceil(zNow().min/STEP)*STEP):OPEN}
+  const forDayFromWeek=()=>weekList.filter(b=>b.day===day);
+
+  // ---------- week ----------
+  function renderWeek(){
+    $("weekLabel").textContent=dm(week[0])+" – "+dm(week[6]);
+    const W=$("week");W.textContent="";
+    week.forEach((d,i)=>{
+      const b=document.createElement("button");b.className="day"+(d===today?" today":"");
+      const mon=isoDow(d)===1,past=d<today;
+      const n=weekList.filter(x=>x.day===d).length;
+      b.innerHTML='<span class="wd"></span><span class="dn"></span><span class="ds"></span>';
+      b.querySelector(".wd").textContent=WD[i];
+      b.querySelector(".dn").textContent=toDate(d).getUTCDate();
+      b.querySelector(".ds").textContent=mon?"Bern":past?"vorbei":n?n+" gebucht":"frei";
+      b.disabled=mon||past;
+      b.title=mon?"Ausgebucht, Julian ist in Bern":"";
+      b.setAttribute("aria-pressed",d===day);
+      b.setAttribute("aria-label",WD[i]+" "+dm(d)+(mon?", ausgebucht, Julian in Bern":past?", vorbei":""));
+      b.onclick=()=>{day=d;sel=null;list=forDayFromWeek();renderAll()};
+      W.appendChild(b)});
+  }
+
+  // ---------- plan ----------
+  const ns="http://www.w3.org/2000/svg";
+  function svg(tag,attrs,parent){const e=document.createElementNS(ns,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e}
+  function drawSofa(el,s){
+    const {x,y,w,h}=s,arm=20,back=18;
+    svg("rect",{class:"frame",x,y,width:w,height:h,rx:12},el);                 // Gestell
+    svg("rect",{class:"frame",x:x+arm-2,y,width:w-2*arm+4,height:back,rx:7},el); // Rückenlehne (zur Wand)
+    svg("rect",{class:"frame",x,y,width:arm,height:h,rx:10},el);              // Armlehne links
+    svg("rect",{class:"frame",x:x+w-arm,y,width:arm,height:h,rx:10},el);      // Armlehne rechts
+    const cw=(w-2*arm-12)/2, cy=y+back+4, ch=h-back-10;
+    svg("rect",{class:"shape",x:x+arm+4,y:cy,width:cw,height:ch,rx:7},el);    // Kissen 1
+    svg("rect",{class:"shape",x:x+arm+8+cw,y:cy,width:cw,height:ch,rx:7},el); // Kissen 2
+    svg("text",{class:"lab",x:x+w/2,y:cy+ch/2+5,"text-anchor":"middle"},el).textContent="Sofa";
+  }
+  function renderPlan(){
+    const g=$("spots");g.textContent="";
+    SPOTS.forEach(s=>{
+      const bs=forSpot(s.id);const my=bs.some(isMine);
+      const locked=!day;
+      const state=locked?"locked":my?"mine":covered(bs)?"full":bs.length?"part":"free";
+      const el=svg("g",{class:"spot "+state+(s.id==="sofa"?" sofa":"")+(sel===s.id?" sel":""),tabindex:locked?"-1":"0",role:"button"});
+      const stTxt={free:"frei",part:"teilweise gebucht",full:"ganzer Tag gebucht",mine:"deine Buchung",locked:"kein Tag gewählt"}[state];
+      el.setAttribute("aria-label",lbl(s.id)+", "+stTxt);
+      if(s.id==="sofa")drawSofa(el,s);
+      else{svg("circle",{class:"shape",cx:s.x,cy:s.y,r:s.r},el);
+        svg("text",{class:"lab",x:s.x,y:s.y+6,"text-anchor":"middle"},el).textContent=s.id}
+      if(!locked){
+        el.addEventListener("click",()=>pick(s.id));
+        el.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();pick(s.id)}});
+      }
+      g.appendChild(el)});
+  }
+
+  async function pick(k){
+    const name=$("name").value.trim();
+    if(k==="sofa"&&name&&!isSandro(name)){await sofaPopup();return}
+    sel=k;$("status").textContent="";renderAll();
+    if(!name)$("name").focus();
+  }
+
+  // ---------- panel ----------
+  function renderPanel(){
+    $("panel").setAttribute("aria-disabled",String(!sel));
+    $("panelTitle").textContent=sel?lbl(sel)+(day?", "+WD[isoDow(day)-1]+" "+dm(day):""):"Noch kein Platz gewählt";
+    $("panelRule").textContent=sel==="sofa"?"Nap, höchstens 1 Stunde":sel?"09:00–18:00, höchstens 8 Stunden":"Wähl einen Platz oder das Sofa im Plan.";
+    $("sofaNote").hidden=sel!=="sofa";
+    const S=$("slots");S.textContent="";
+    const bs=sel?forSpot(sel):[];
+    const chip=(t,c)=>{const e=document.createElement("span");e.className="chip"+(c?" "+c:"");e.textContent=t;S.appendChild(e)};
+    if(!sel)chip("–");
+    else if(!bs.length)chip("Nichts, ganzer Tag frei");
+    else bs.forEach(b=>chip(fmt(b.start_min)+"–"+fmt(b.end_min)+" "+b.name,isMine(b)?"mine":""));
+    fillFrom();
+  }
+  const busyAt=(m,bs)=>bs.some(b=>m>=b.start_min&&m<b.end_min);
+  function fillFrom(){
+    const f=$("from"),prev=+f.value||0;f.textContent="";
+    const bs=sel?forSpot(sel):[];
+    if(sel&&day){for(let m=earliest();m<CLOSE;m+=STEP){if(!busyAt(m,bs))f.add(new Option(fmt(m),m))}}
+    if(prev&&[...f.options].some(o=>+o.value===prev))f.value=prev;
+    f.disabled=!f.options.length;
+    fillTo();
+  }
+  function fillTo(){
+    const t=$("to"),prev=+t.value||0;t.textContent="";
+    const from=+$("from").value;
+    if(!$("from").options.length){t.disabled=true;$("book").disabled=true;
+      $("book").textContent=sel?"An diesem Tag nichts mehr frei":"Buchen";return}
+    const bs=forSpot(sel);const next=bs.filter(b=>b.start_min>from).reduce((a,b)=>Math.min(a,b.start_min),CLOSE);
+    const max=sel==="sofa"?MAX_SOFA:MAX_SEAT;
+    for(let m=from+STEP;m<=Math.min(next,from+max);m+=STEP)t.add(new Option(fmt(m),m));
+    if(prev&&[...t.options].some(o=>+o.value===prev))t.value=prev;
+    else t.value=t.options[Math.min(t.options.length-1,sel==="sofa"?1:7)].value;
+    t.disabled=false;$("book").disabled=false;$("book").textContent=lbl(sel)+" buchen";
+  }
+  $("from").onchange=fillTo;
+
+  // ---------- overview ----------
+  function renderOverview(){
+    $("dayName").textContent=day?WD[isoDow(day)-1]+" "+dm(day):"";
+    const G=$("grid");G.textContent="";
+    const ax=document.createElement("div");ax.className="g-axis";
+    ax.innerHTML="<div></div><div><span>09</span><span>12</span><span>15</span><span>18</span></div>";G.appendChild(ax);
+    SPOTS.forEach(s=>{
+      const r=document.createElement("div");r.className="g-row";
+      const l=document.createElement("div");l.className="g-lab";l.textContent=lbl(s.id);
+      const tr=document.createElement("div");tr.className="g-track";
+      forSpot(s.id).forEach(b=>{const bar=document.createElement("div");bar.className="g-bar"+(isMine(b)?" mine":"");
+        bar.style.left=((b.start_min-OPEN)/(CLOSE-OPEN)*100)+"%";bar.style.width=((b.end_min-b.start_min)/(CLOSE-OPEN)*100)+"%";
+        bar.textContent=b.name;bar.title=b.name+" "+fmt(b.start_min)+"–"+fmt(b.end_min);tr.appendChild(bar)});
+      r.append(l,tr);G.appendChild(r)});
+    // Admin-Liste mit Storno für alle Buchungen des Tages
+    const L=$("dayList");L.hidden=!adminKey;L.textContent="";
+    if(adminKey)[...list].sort((a,b)=>a.start_min-b.start_min).forEach(b=>L.appendChild(itemRow(b,false)));
+  }
+  function itemRow(b,withDay){
+    const r=document.createElement("div");r.className="item";
+    const a=document.createElement("span");const tm=document.createElement("span");tm.className="mono";
+    tm.textContent=(withDay?WD[isoDow(b.day)-1]+" "+dm(b.day)+" ":"")+fmt(b.start_min)+"–"+fmt(b.end_min);
+    a.append(tm,document.createTextNode(" · "+lbl(b.seat)+(withDay?"":" · "+b.name)));r.appendChild(a);
+    if(isMine(b)||adminKey){const x=document.createElement("button");x.className="btn ghost small";x.textContent="Stornieren";x.onclick=()=>cancel(b);r.appendChild(x)}
+    return r;
+  }
+  function renderMine(){
+    const my=weekList.filter(isMine).sort((a,b)=>a.day.localeCompare(b.day)||a.start_min-b.start_min);
+    $("mineSection").hidden=!my.length;
+    const L=$("mineList");L.textContent="";my.forEach(b=>L.appendChild(itemRow(b,true)));
+  }
+
+  function renderAll(){renderWeek();renderPlan();renderPanel();renderOverview();renderMine()}
+
+  // ---------- load ----------
+  async function load(){
+    try{
+      weekList=await api("bookings?select=id,day,seat,name,start_min,end_min&day=gte."+week[0]+"&day=lte."+week[6]+"&order=start_min");
+      list=forDayFromWeek();loaded=true;renderAll();
+    }catch(e){loaded=true;$("status").textContent="Buchungen konnten nicht geladen werden.";renderAll()}
+  }
+
+  // ---------- book / cancel ----------
+  $("book").onclick=async()=>{
+    const name=$("name").value.trim();const k=sel;
+    const start=+$("from").value,end=+$("to").value;
+    if(!name){$("status").textContent="Bitte zuerst deinen Namen eintragen.";$("name").focus();return}
+    if(k==="sofa"&&!isSandro(name)){await sofaPopup();return}
+    if(isTim(name)&&!(await timPopup()))return;
+    try{localStorage.setItem("s52name",name)}catch(e){}
+    $("book").disabled=true;$("status").textContent="Wird gebucht…";
+    try{
+      const res=await rpc("book",{p_day:day,p_seat:k,p_name:name,p_start:start,p_end:end});
+      const row=Array.isArray(res)?res[0]:res;
+      mine[row.id]=row.cancel_token;setStore("s52tokens",mine);
+      await load();
+      $("status").textContent="Gebucht: "+lbl(k)+", "+fmt(start)+"–"+fmt(end)+".";
+    }catch(e){$("status").textContent=errText(e);await load()}
+  };
+
+  async function cancel(b){
+    const ok=await ask("Buchung stornieren?",lbl(b.seat)+", "+WD[isoDow(b.day)-1]+" "+dm(b.day)+", "+fmt(b.start_min)+"–"+fmt(b.end_min)+" ("+b.name+")",
+      [{label:"Behalten",value:false},{label:"Stornieren",value:true,primary:true}]);
+    if(!ok)return;
+    try{
+      const done=await rpc("cancel_booking",{p_id:b.id,p_token:mine[b.id]||adminKey});
+      if(!done){$("status").textContent="Diese Buchung kannst du nicht stornieren.";return}
+      delete mine[b.id];setStore("s52tokens",mine);
+      await load();$("status").textContent="Storniert.";
+    }catch(e){$("status").textContent="Stornieren hat nicht geklappt."}
+  }
+
+  // ---------- admin ----------
+  (async()=>{
+    const q=new URLSearchParams(location.search).get("admin");
+    const key=q||getStore("s52admin",null);if(!key)return;
+    try{if(await rpc("is_admin",{p_token:key})){adminKey=key;setStore("s52admin",key);renderAll()}else setStore("s52admin",null)}catch(e){}
+    if(q)history.replaceState(null,"",location.pathname);
+  })();
+
+  $("name").addEventListener("change",()=>{
+    const n=$("name").value.trim();
+    if(sel==="sofa"&&n&&!isSandro(n)){sofaPopup().then(()=>{sel=null;renderAll()})}
+  });
+
+  // ---------- coffee ----------
+  function machine(){
+    const t=zNow().min;const w1=t>=540&&t<720,w2=t>=780&&t<990,on=w1||w2;
+    const c=$("coffee");c.classList.toggle("on",on);c.classList.toggle("off",!on);
+    $("coffeeState").textContent=on?"Maschine ist an":"Maschine ist aus";
+    $("coffeeNext").textContent=on?(w1?"Kaffee bis 12:00":"Kaffee bis 16:30")
+      :(t<540?"Wieder an ab 09:00":t<780?"Mittagspause, wieder an ab 13:00":"Wieder an morgen ab 09:00");
+    $("w1").classList.toggle("cur",w1);$("w2").classList.toggle("cur",w2);
+  }
+  machine();setInterval(machine,30000);
+
+  renderAll();load();
+  setInterval(()=>{if(!document.hidden&&!$("dlg").open)load()},30000);
+  document.addEventListener("visibilitychange",()=>{if(!document.hidden)load()});
+})();
+</script>
+</body>
+</html>
