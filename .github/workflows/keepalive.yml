@@ -11,5 +11,5 @@ jobs:
     steps:
       - name: Buchungen abfragen
         run: |
-          curl -fsS "${{ secrets.SUPABASE_URL }}/rest/v1/bookings?select=id&limit=1" \
-            -H "apikey: ${{ secrets.SUPABASE_KEY }}" > /dev/null
+          curl -fsS "https://btgzepbllyughyfjwuve.supabase.co/rest/v1/bookings?select=id&limit=1" \
+            -H "apikey: sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1" > /dev/null
