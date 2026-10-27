@@ -42,16 +42,16 @@ button{font:inherit;color:inherit}
 
 /* ---------- layout ---------- */
 .app{max-width:1400px;margin:0 auto;padding-block:28px 48px;display:grid;gap:28px;grid-template-columns:minmax(0,1fr)}
-.col{display:flex;flex-direction:column;gap:20px;min-width:0}
+.col{display:flex;flex-direction:column;gap:16px;min-width:0}
 @media (min-width:1080px){
   html,body{height:100%}
-  .app{grid-template-columns:290px minmax(0,1fr) 330px;gap:32px;align-items:start;min-height:100%;padding-block:28px}
+  .app{grid-template-columns:310px minmax(0,1fr) 340px;gap:32px;align-items:start;min-height:100%;padding-block:28px}
   .col.side{position:sticky;top:28px}
 }
 
 /* ---------- info column ---------- */
 .brand{display:flex;flex-direction:column;gap:4px}
-.card{border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.card{border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
 .coffee{background:var(--soft);border-color:transparent}
 .coffee.on{background:var(--ok-soft)}
 .coffee.off{background:var(--off-soft)}
@@ -64,12 +64,12 @@ button{font:inherit;color:inherit}
 .windows{display:flex;gap:6px;flex-wrap:wrap}
 .win{font:500 .8125rem var(--mono);padding:4px 9px;border-radius:6px;background:var(--bg);color:var(--muted);border:1px solid var(--line)}
 .win.cur{border-color:var(--ok);color:var(--ok)}
-.facts{display:grid;grid-template-columns:4.5rem 1fr;gap:4px 12px;margin:0;font-size:.875rem}
+.facts{display:grid;grid-template-columns:4rem 1fr;gap:3px 10px;margin:0;font-size:.84375rem;line-height:1.45}
 .facts dt{color:var(--muted)} .facts dd{margin:0;min-width:0}
 .rules{border-color:var(--warn-soft);background:var(--warn-soft)}
 .rules h2{color:var(--warn)}
-.rules ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;font-size:.875rem}
-.rules li{display:grid;grid-template-columns:4.5rem 1fr;gap:12px}
+.rules ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:7px;font-size:.84375rem;line-height:1.45}
+.rules li{display:grid;grid-template-columns:4rem 1fr;gap:10px}
 .rules b{font-weight:600;color:var(--warn)}
 .foot{font-size:.75rem;color:var(--muted)}
 
@@ -77,6 +77,11 @@ button{font:inherit;color:inherit}
 .step-head{display:flex;align-items:baseline;gap:10px;margin-bottom:10px}
 .step-no{font:500 .75rem var(--mono);color:var(--faint)}
 .step-sub{font-size:.8125rem;color:var(--muted);margin-left:auto;text-align:right}
+.weeknav{margin-left:auto;display:flex;align-items:center;gap:6px}
+.weeknav .step-sub{margin:0;min-width:8.5rem;text-align:center}
+.weeknav .btn{font:500 1rem/1 var(--mono);padding:4px 10px}
+.day.we .ds{color:var(--warn)}
+.day[aria-pressed="true"].we .ds{color:var(--bg)}
 .week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
 .day{display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 4px;border:1px solid var(--line);
   border-radius:8px;background:var(--bg);cursor:pointer;min-width:0}
@@ -104,6 +109,8 @@ button{font:inherit;color:inherit}
 .spot.sel .shape{stroke:var(--accent);stroke-width:3.5}
 .spot.locked{cursor:not-allowed}
 .spot.locked .shape{fill:var(--soft);stroke:var(--line);stroke-dasharray:4 3}
+.spot.locked .lab{fill:var(--faint)}
+.sofa.locked .frame{fill:var(--soft);stroke:var(--line);stroke-dasharray:4 3}
 .spot:focus{outline:none}
 .spot:focus-visible .shape{stroke:var(--accent);stroke-width:3.5}
 /* sofa: frame stays sofa-coloured, cushions carry the booking state */
@@ -121,7 +128,7 @@ button{font:inherit;color:inherit}
 .g-row{display:grid;grid-template-columns:4.25rem 1fr;align-items:center;gap:8px}
 .g-lab{font:500 .75rem var(--mono)}
 .g-track{position:relative;height:15px;background:var(--soft);border-radius:3px;
-  background-image:repeating-linear-gradient(90deg,transparent 0,transparent calc(100%/9 - 1px),var(--line) calc(100%/9 - 1px),var(--line) calc(100%/9))}
+  background-image:repeating-linear-gradient(90deg,transparent 0,transparent calc(100%/var(--seg,9) - 1px),var(--line) calc(100%/var(--seg,9) - 1px),var(--line) calc(100%/var(--seg,9)))}
 .g-bar{position:absolute;top:0;bottom:0;background:var(--taken);border-radius:3px;font:400 10px/15px var(--sans);padding:0 4px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .g-bar.mine{background:var(--accent);color:var(--bg)}
 .g-axis{display:grid;grid-template-columns:4.25rem 1fr;gap:8px;font:400 .6875rem var(--mono);color:var(--muted);margin-bottom:2px}
@@ -186,24 +193,24 @@ dialog p{color:var(--muted)}
           <p class="coffee-next" id="coffeeNext"></p>
         </div>
       </div>
-      <div class="windows" aria-label="Betriebszeiten">
-        <span class="win" id="w1">09:00–12:00</span>
-        <span class="win" id="w2">13:00–16:30</span>
-      </div>
+      <div class="windows" id="windows" aria-label="Betriebszeiten heute"></div>
       <dl class="facts">
+        <dt>Zeiten</dt><dd class="mono" style="font-size:.8125rem">Di–Fr 09–12, 13–16<br>Sa–So 11–15<br>Mo aus</dd>
         <dt>Maschine</dt><dd>Rocket R58 Tune</dd>
-        <dt>Bohnen</dt><dd>Specialty Coffee aus Indien oder Honduras</dd>
-        <dt>Milch</dt><dd>Nur Proteinmilch. Eigene Milch darfst du mitbringen.</dd>
+        <dt>Bohnen</dt><dd>Specialty Coffee, Indien oder Honduras</dd>
+        <dt>Milch</dt><dd>Nur Proteinmilch, eigene darfst du mitbringen</dd>
       </dl>
     </section>
 
     <section class="card rules" aria-labelledby="h-rules">
       <h2 id="h-rules">Hausregeln</h2>
       <ul>
-        <li><b>Zeiten</b><span>Nur die aktuelle Woche, 09:00–18:00, höchstens 8 Stunden am Stück.</span></li>
-        <li><b>Montag</b><span>Ausgebucht, Julian ist in Bern.</span></li>
-        <li><b>Sofa</b><span>Nur Sandro Ganter, Nap von höchstens 1 Stunde.</span></li>
-        <li><b>Tim</b><span>Für Tim Wünsch gilt Hausverbot bei unangekündigten Besuchen oder mehr als 30 Minuten Verspätung.</span></li>
+        <li><b>Di–Fr</b><span>Arbeitsplätze 08:30–16:00, max. 8 Std.</span></li>
+        <li><b>Sa–So</b><span>Nur Kaffee-Spots, 11:00–15:00</span></li>
+        <li><b>Montag</b><span>Ausgebucht, Julian ist in Bern</span></li>
+        <li><b>Vorlauf</b><span>Bis drei Wochen im Voraus</span></li>
+        <li><b>Sofa</b><span>Nur Sandro Ganter, Nap max. 1 Std., Di–Fr</span></li>
+        <li><b>Tim</b><span>Tim Wünsch: Hausverbot bei unangekündigtem Besuch oder über 30 Min. Verspätung</span></li>
       </ul>
     </section>
 
@@ -214,16 +221,22 @@ dialog p{color:var(--muted)}
   <section class="col" aria-labelledby="h-book">
     <h2 id="h-book" class="sr" style="position:absolute;left:-9999px">Platz buchen</h2>
     <div>
-      <div class="step-head"><span class="step-no">1</span><h3>Tag</h3><span class="step-sub" id="weekLabel"></span></div>
+      <div class="step-head"><span class="step-no">1</span><h3>Tag</h3>
+        <div class="weeknav">
+          <button class="btn ghost small" id="prevWeek" aria-label="Vorherige Woche">‹</button>
+          <span class="step-sub mono" id="weekLabel"></span>
+          <button class="btn ghost small" id="nextWeek" aria-label="Nächste Woche">›</button>
+        </div>
+      </div>
       <div class="week" id="week" role="group" aria-label="Tag in dieser Woche wählen"></div>
     </div>
 
     <div>
-      <div class="step-head"><span class="step-no">2</span><h3>Platz</h3><span class="step-sub">Platz oder Sofa antippen</span></div>
+      <div class="step-head"><span class="step-no">2</span><h3>Platz</h3><span class="step-sub" id="planSub">Platz oder Sofa antippen</span></div>
       <div class="plan">
         <svg viewBox="0 -8 560 338" role="group" aria-label="Raumplan mit Tisch, sechs Plätzen und Sofa">
           <rect class="tbl" x="120" y="62" width="280" height="100" rx="4"/>
-          <text class="tbl-label" x="260" y="117" text-anchor="middle">Tisch</text>
+          <text class="tbl-label" x="260" y="117" text-anchor="middle" id="tblLabel">Tisch</text>
           <g id="spots"></g>
         </svg>
         <div class="legend">
@@ -268,6 +281,7 @@ dialog p{color:var(--muted)}
           </div>
         </div>
         <p class="note" id="sofaNote" hidden>Das Sofa ist für Sandro reserviert, für einen Nap von höchstens 1 Stunde.</p>
+        <p class="note" id="weNote" hidden>Am Wochenende gibt es nur Kaffee-Spots, von 11:00 bis 15:00.</p>
         <button class="btn wide" id="book" disabled>Buchen</button>
         <p class="status" id="status" role="status"></p>
       </div>
@@ -299,7 +313,12 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
     {id:"4",x:320,y:200,r:27},{id:"5",x:200,y:200,r:27},
     {id:"6",x:74,y:112,r:27},
     {id:"sofa",x:330,y:246,w:200,h:76}];
-  const OPEN=540,CLOSE=1080,STEP=30,MAX_SEAT=480,MAX_SOFA=60;
+  const STEP=30,MAX_SEAT=480,MAX_SOFA=60,WEEKS=4;
+  // Buchbare Zeiten pro Wochentag (1=Mo … 7=So), in Minuten ab Mitternacht
+  const HOURS={2:[510,960],3:[510,960],4:[510,960],5:[510,960],6:[660,900],7:[660,900]};
+  // Kaffeemaschine pro Wochentag
+  const MACHINE={2:[[540,720],[780,960]],3:[[540,720],[780,960]],4:[[540,720],[780,960]],5:[[540,720],[780,960]],6:[[660,900]],7:[[660,900]]};
+  let OPEN=510,CLOSE=960;
   const WD=["Mo","Di","Mi","Do","Fr","Sa","So"];
   const tz="Europe/Zurich";
   const $=s=>document.getElementById(s);
@@ -308,22 +327,28 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
 
   // ---------- helpers ----------
   const fmt=m=>String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0");
-  const lbl=k=>k==="sofa"?"Sofa":"Platz "+k;
+  const lbl=(k,d)=>{d=d||day;return k==="sofa"?"Sofa":(d&&isoDow(d)>=6?"Kaffee-Spot ":"Platz ")+k};
   function zNow(){const p=new Intl.DateTimeFormat("en-CA",{timeZone:tz,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}).formatToParts(new Date());
     const g=t=>p.find(x=>x.type===t).value;return{ymd:g("year")+"-"+g("month")+"-"+g("day"),min:(+g("hour")%24)*60+ +g("minute")}}
   const toDate=s=>{const[y,m,d]=s.split("-").map(Number);return new Date(Date.UTC(y,m-1,d))};
   const toYmd=d=>d.toISOString().slice(0,10);
   const addDays=(s,n)=>{const d=toDate(s);d.setUTCDate(d.getUTCDate()+n);return toYmd(d)};
   const isoDow=s=>((toDate(s).getUTCDay()+6)%7)+1;
+  const isWeekend=d=>!!d&&isoDow(d)>=6;
   const dm=s=>{const d=toDate(s);return d.getUTCDate()+"."+(d.getUTCMonth()+1)+"."};
   function getStore(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v??d}catch(e){return d}}
   function setStore(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 
   // ---------- state ----------
   const today=zNow().ymd;
-  const monday=addDays(today,1-isoDow(today));
-  const week=[...Array(7)].map((_,i)=>addDays(monday,i));
-  let day=week.find(d=>d>=today&&isoDow(d)!==1)||null;
+  const monday0=addDays(today,1-isoDow(today));
+  const lastDay=addDays(monday0,WEEKS*7-1);
+  let wk=0,week=[];
+  function setWeek(n){wk=n;const m=addDays(monday0,7*n);week=[...Array(7)].map((_,i)=>addDays(m,i))}
+  const bookable=d=>d>=today&&d<=lastDay&&!!HOURS[isoDow(d)];
+  setWeek(0);
+  let day=week.find(bookable)||null;
+  if(!day){setWeek(1);day=week.find(bookable)||null}
   let sel=null,list=[],weekList=[],loaded=false,adminKey=null;
   let mine=getStore("s52tokens",{});
   const isMine=b=>!!mine[b.id];
@@ -342,9 +367,10 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
     if(m.includes("no_overlap"))return"Dieser Platz ist in dieser Zeit schon gebucht.";
     if(m.includes("sofa_sandro"))return"Das Sofa ist nur für Sandro.";
     if(m.includes("max_length"))return sel==="sofa"?"Ein Nap dauert höchstens 1 Stunde.":"Höchstens 8 Stunden am Stück.";
-    if(m.includes("opening_hours"))return"Buchbar ist nur zwischen 09:00 und 18:00.";
+    if(m.includes("weekend_coffee"))return"Am Wochenende gibt es nur Kaffee-Spots, kein Sofa.";
+    if(m.includes("opening_hours"))return"An diesem Tag ist nur "+fmt(OPEN)+"–"+fmt(CLOSE)+" buchbar.";
     if(m.includes("not_monday")||m.includes("Montag"))return"Montags ist alles ausgebucht, Julian ist in Bern.";
-    if(m.includes("Woche"))return"Buchbar ist nur die aktuelle Woche.";
+    if(m.includes("Woche"))return"Buchbar sind nur diese und die nächsten drei Wochen.";
     return"Das hat nicht geklappt. Prüf deine Verbindung und versuch es nochmal.";
   }
 
@@ -376,19 +402,20 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
   // ---------- week ----------
   function renderWeek(){
     $("weekLabel").textContent=dm(week[0])+" – "+dm(week[6]);
+    $("prevWeek").disabled=wk===0;$("nextWeek").disabled=wk>=WEEKS-1;
     const W=$("week");W.textContent="";
     week.forEach((d,i)=>{
-      const b=document.createElement("button");b.className="day"+(d===today?" today":"");
-      const mon=isoDow(d)===1,past=d<today;
+      const b=document.createElement("button");b.className="day"+(d===today?" today":"")+(isWeekend(d)?" we":"");
+      const mon=isoDow(d)===1,past=d<today,we=isWeekend(d);
       const n=weekList.filter(x=>x.day===d).length;
       b.innerHTML='<span class="wd"></span><span class="dn"></span><span class="ds"></span>';
       b.querySelector(".wd").textContent=WD[i];
       b.querySelector(".dn").textContent=toDate(d).getUTCDate();
-      b.querySelector(".ds").textContent=mon?"Bern":past?"vorbei":n?n+" gebucht":"frei";
-      b.disabled=mon||past;
+      b.querySelector(".ds").textContent=mon?"Bern":past?"vorbei":we?(n?n+" Kaffee":"Kaffee"):n?n+" gebucht":"frei";
+      b.disabled=!bookable(d);
       b.title=mon?"Ausgebucht, Julian ist in Bern":"";
       b.setAttribute("aria-pressed",d===day);
-      b.setAttribute("aria-label",WD[i]+" "+dm(d)+(mon?", ausgebucht, Julian in Bern":past?", vorbei":""));
+      b.setAttribute("aria-label",WD[i]+" "+dm(d)+(mon?", ausgebucht, Julian in Bern":past?", vorbei":we?", nur Kaffee-Spots":""));
       b.onclick=()=>{day=d;sel=null;list=forDayFromWeek();renderAll()};
       W.appendChild(b)});
   }
@@ -408,13 +435,16 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
     svg("text",{class:"lab",x:x+w/2,y:cy+ch/2+5,"text-anchor":"middle"},el).textContent="Sofa";
   }
   function renderPlan(){
+    const we=isWeekend(day);
+    $("tblLabel").textContent=we?"Kaffee":"Tisch";
+    $("planSub").textContent=we?"Kaffee-Spot antippen":"Platz oder Sofa antippen";
     const g=$("spots");g.textContent="";
     SPOTS.forEach(s=>{
       const bs=forSpot(s.id);const my=bs.some(isMine);
-      const locked=!day;
+      const locked=!day||(s.id==="sofa"&&we);
       const state=locked?"locked":my?"mine":covered(bs)?"full":bs.length?"part":"free";
       const el=svg("g",{class:"spot "+state+(s.id==="sofa"?" sofa":"")+(sel===s.id?" sel":""),tabindex:locked?"-1":"0",role:"button"});
-      const stTxt={free:"frei",part:"teilweise gebucht",full:"ganzer Tag gebucht",mine:"deine Buchung",locked:"kein Tag gewählt"}[state];
+      const stTxt={free:"frei",part:"teilweise gebucht",full:"ganzer Tag gebucht",mine:"deine Buchung",locked:s.id==="sofa"&&we?"nur Dienstag bis Freitag":"kein Tag gewählt"}[state];
       el.setAttribute("aria-label",lbl(s.id)+", "+stTxt);
       if(s.id==="sofa")drawSofa(el,s);
       else{svg("circle",{class:"shape",cx:s.x,cy:s.y,r:s.r},el);
@@ -428,6 +458,7 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
 
   async function pick(k){
     const name=$("name").value.trim();
+    if(k==="sofa"&&isWeekend(day))return;
     if(k==="sofa"&&name&&!isSandro(name)){await sofaPopup();return}
     sel=k;$("status").textContent="";renderAll();
     if(!name)$("name").focus();
@@ -437,8 +468,10 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
   function renderPanel(){
     $("panel").setAttribute("aria-disabled",String(!sel));
     $("panelTitle").textContent=sel?lbl(sel)+(day?", "+WD[isoDow(day)-1]+" "+dm(day):""):"Noch kein Platz gewählt";
-    $("panelRule").textContent=sel==="sofa"?"Nap, höchstens 1 Stunde":sel?"09:00–18:00, höchstens 8 Stunden":"Wähl einen Platz oder das Sofa im Plan.";
+    const span=fmt(OPEN)+"–"+fmt(CLOSE);
+    $("panelRule").textContent=sel==="sofa"?"Nap, höchstens 1 Stunde":!sel?"Wähl einen Platz im Plan.":isWeekend(day)?"Kaffee-Spot, "+span:span+", höchstens 8 Stunden";
     $("sofaNote").hidden=sel!=="sofa";
+    $("weNote").hidden=!isWeekend(day);
     const S=$("slots");S.textContent="";
     const bs=sel?forSpot(sel):[];
     const chip=(t,c)=>{const e=document.createElement("span");e.className="chip"+(c?" "+c:"");e.textContent=t;S.appendChild(e)};
@@ -465,7 +498,7 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
     const max=sel==="sofa"?MAX_SOFA:MAX_SEAT;
     for(let m=from+STEP;m<=Math.min(next,from+max);m+=STEP)t.add(new Option(fmt(m),m));
     if(prev&&[...t.options].some(o=>+o.value===prev))t.value=prev;
-    else t.value=t.options[Math.min(t.options.length-1,sel==="sofa"?1:7)].value;
+    else t.value=t.options[Math.min(t.options.length-1,(sel==="sofa"||isWeekend(day))?1:7)].value;
     t.disabled=false;$("book").disabled=false;$("book").textContent=lbl(sel)+" buchen";
   }
   $("from").onchange=fillTo;
@@ -474,11 +507,15 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
   function renderOverview(){
     $("dayName").textContent=day?WD[isoDow(day)-1]+" "+dm(day):"";
     const G=$("grid");G.textContent="";
-    const ax=document.createElement("div");ax.className="g-axis";
-    ax.innerHTML="<div></div><div><span>09</span><span>12</span><span>15</span><span>18</span></div>";G.appendChild(ax);
-    SPOTS.forEach(s=>{
+    const we=isWeekend(day);
+    G.style.setProperty("--seg",(CLOSE-OPEN)/STEP);
+    const ax=document.createElement("div");ax.className="g-axis";ax.appendChild(document.createElement("div"));
+    const tk=document.createElement("div");
+    for(let m=OPEN;m<=CLOSE;m+=we?60:150){const sp=document.createElement("span");sp.textContent=fmt(m);tk.appendChild(sp)}
+    ax.appendChild(tk);G.appendChild(ax);
+    SPOTS.filter(s=>!(we&&s.id==="sofa")).forEach(s=>{
       const r=document.createElement("div");r.className="g-row";
-      const l=document.createElement("div");l.className="g-lab";l.textContent=lbl(s.id);
+      const l=document.createElement("div");l.className="g-lab";l.textContent=s.id==="sofa"?"Sofa":(we?"Spot ":"Platz ")+s.id;
       const tr=document.createElement("div");tr.className="g-track";
       forSpot(s.id).forEach(b=>{const bar=document.createElement("div");bar.className="g-bar"+(isMine(b)?" mine":"");
         bar.style.left=((b.start_min-OPEN)/(CLOSE-OPEN)*100)+"%";bar.style.width=((b.end_min-b.start_min)/(CLOSE-OPEN)*100)+"%";
@@ -492,7 +529,7 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
     const r=document.createElement("div");r.className="item";
     const a=document.createElement("span");const tm=document.createElement("span");tm.className="mono";
     tm.textContent=(withDay?WD[isoDow(b.day)-1]+" "+dm(b.day)+" ":"")+fmt(b.start_min)+"–"+fmt(b.end_min);
-    a.append(tm,document.createTextNode(" · "+lbl(b.seat)+(withDay?"":" · "+b.name)));r.appendChild(a);
+    a.append(tm,document.createTextNode(" · "+lbl(b.seat,b.day)+(withDay?"":" · "+b.name)));r.appendChild(a);
     if(isMine(b)||adminKey){const x=document.createElement("button");x.className="btn ghost small";x.textContent="Stornieren";x.onclick=()=>cancel(b);r.appendChild(x)}
     return r;
   }
@@ -502,12 +539,13 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
     const L=$("mineList");L.textContent="";my.forEach(b=>L.appendChild(itemRow(b,true)));
   }
 
-  function renderAll(){renderWeek();renderPlan();renderPanel();renderOverview();renderMine()}
+  function setDayHours(){const h=(day&&HOURS[isoDow(day)])||[510,960];OPEN=h[0];CLOSE=h[1]}
+  function renderAll(){setDayHours();renderWeek();renderPlan();renderPanel();renderOverview();renderMine()}
 
   // ---------- load ----------
   async function load(){
     try{
-      weekList=await api("bookings?select=id,day,seat,name,start_min,end_min&day=gte."+week[0]+"&day=lte."+week[6]+"&order=start_min");
+      weekList=await api("bookings?select=id,day,seat,name,start_min,end_min&day=gte."+monday0+"&day=lte."+lastDay+"&order=start_min");
       list=forDayFromWeek();loaded=true;renderAll();
     }catch(e){loaded=true;$("status").textContent="Buchungen konnten nicht geladen werden.";renderAll()}
   }
@@ -531,7 +569,7 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
   };
 
   async function cancel(b){
-    const ok=await ask("Buchung stornieren?",lbl(b.seat)+", "+WD[isoDow(b.day)-1]+" "+dm(b.day)+", "+fmt(b.start_min)+"–"+fmt(b.end_min)+" ("+b.name+")",
+    const ok=await ask("Buchung stornieren?",lbl(b.seat,b.day)+", "+WD[isoDow(b.day)-1]+" "+dm(b.day)+", "+fmt(b.start_min)+"–"+fmt(b.end_min)+" ("+b.name+")",
       [{label:"Behalten",value:false},{label:"Stornieren",value:true,primary:true}]);
     if(!ok)return;
     try{
@@ -557,14 +595,28 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
 
   // ---------- coffee ----------
   function machine(){
-    const t=zNow().min;const w1=t>=540&&t<720,w2=t>=780&&t<990,on=w1||w2;
+    const n=zNow(),dw=isoDow(n.ymd),t=n.min,ws=MACHINE[dw]||[];
+    const cur=ws.find(w=>t>=w[0]&&t<w[1]),on=!!cur;
     const c=$("coffee");c.classList.toggle("on",on);c.classList.toggle("off",!on);
     $("coffeeState").textContent=on?"Maschine ist an":"Maschine ist aus";
-    $("coffeeNext").textContent=on?(w1?"Kaffee bis 12:00":"Kaffee bis 16:30")
-      :(t<540?"Wieder an ab 09:00":t<780?"Mittagspause, wieder an ab 13:00":"Wieder an morgen ab 09:00");
-    $("w1").classList.toggle("cur",w1);$("w2").classList.toggle("cur",w2);
+    let next;
+    if(on)next="Kaffee bis "+fmt(cur[1]);
+    else{
+      const later=ws.find(w=>w[0]>t);
+      if(later)next=(ws.some(w=>w[1]<=t)?"Mittagspause, wieder an ab ":"Wieder an ab ")+fmt(later[0]);
+      else{for(let i=1;i<=7;i++){const d=addDays(n.ymd,i),w=MACHINE[isoDow(d)];
+        if(w){next=(dw===1&&!ws.length?"Heute aus, Julian ist in Bern. ":"")+"Wieder an "+(i===1?"morgen":WD[isoDow(d)-1])+" ab "+fmt(w[0][0]);break}}}
+    }
+    $("coffeeNext").textContent=next;
+    const W=$("windows");W.textContent="";
+    if(!ws.length){const e=document.createElement("span");e.className="win";e.textContent="Heute keine";W.appendChild(e)}
+    ws.forEach(w=>{const e=document.createElement("span");e.className="win"+(cur===w?" cur":"");e.textContent=fmt(w[0])+"–"+fmt(w[1]);W.appendChild(e)});
   }
   machine();setInterval(machine,30000);
+
+  function goWeek(n){setWeek(n);day=week.find(bookable)||null;sel=null;list=forDayFromWeek();$("status").textContent="";renderAll()}
+  $("prevWeek").onclick=()=>{if(wk>0)goWeek(wk-1)};
+  $("nextWeek").onclick=()=>{if(wk<WEEKS-1)goWeek(wk+1)};
 
   renderAll();load();
   setInterval(()=>{if(!document.hidden&&!$("dlg").open)load()},30000);
