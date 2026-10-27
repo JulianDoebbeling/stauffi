@@ -93,12 +93,21 @@ button{font:inherit;color:inherit}
   .status-row{justify-content:flex-end}
   .pill.coffee-pill{display:none}
   .theme-btn{align-self:center}
-  .app{grid-template-columns:300px minmax(0,1fr) 340px;grid-template-areas:"info book side" "info over side";column-gap:32px;row-gap:16px;padding-block:18px 32px}
-  .area-info{display:flex;flex-direction:column;gap:16px;position:sticky;top:22px;align-self:start}
-  .area-side{top:22px}
-  .area-book .plan svg{max-height:min(36vh,320px)}
-  .area-over .g-track{height:16px} .area-over .g-bar{line-height:16px}
+  /* Eine Bildschirmhöhe: der Plan füllt den freien Platz, die Seite skaliert per JS (zoom) mit dem Bildschirm */
+  body{display:flex;flex-direction:column;min-height:100%}
+  .top{flex:none;width:100%}
+  .app{flex:1 0 auto;width:100%;min-height:600px;grid-template-columns:300px minmax(0,1fr) 340px;grid-template-rows:minmax(0,1fr) auto;
+    grid-template-areas:"info book side" "info over side";column-gap:32px;row-gap:10px;padding-block:12px 10px}
+  .area-info{display:flex;flex-direction:column;gap:14px;align-self:start}
+  .area-side{position:static;align-self:start}
+  .area-book{min-height:0;display:flex;flex-direction:column;gap:12px}
+  .area-book > div:last-of-type{flex:1;min-height:0;display:flex;flex-direction:column}
+  .area-book .plan{flex:1;min-height:260px;display:flex;flex-direction:column}
+  .area-book .plan svg{flex:1 1 0;min-height:0;height:0;max-height:none;width:100%}
+  .area-over .g-track{height:15px} .area-over .g-bar{line-height:15px}
   .area-over .grid-inner{gap:3px}
+  .area-over .over-head{margin-bottom:4px}
+  #mineList{max-height:132px;overflow:auto}
 }
 
 /* ---------- info cards ---------- */
@@ -195,7 +204,8 @@ button{font:inherit;color:inherit}
 .spot:focus-visible .shape{stroke:var(--accent);stroke-width:3.5}
 .sofa .frame{fill:var(--sofa);stroke:var(--sofa-line);stroke-width:1.5}
 .sofa .shape{fill:var(--bg);stroke:var(--sofa-line);stroke-width:1.2}
-.sofa .lab{font:500 15px var(--mono)}
+.sofa .lab{font:500 15px var(--mono);paint-order:stroke;stroke:var(--bg);stroke-width:5px;stroke-linejoin:round}
+.sofa.locked .lab{stroke:var(--soft)}
 .sofa.sel .frame,.sofa:focus-visible .frame{stroke:var(--accent);stroke-width:3}
 .sofa.sel .shape{stroke:var(--sofa-line);stroke-width:1.2}
 .sofa.locked .frame{fill:var(--soft);stroke:var(--line);stroke-dasharray:4 3}
@@ -342,7 +352,7 @@ dialog p{color:var(--muted)}
     <div>
       <div class="step-head"><span class="step-no">2</span><h3>Platz</h3><span class="step-sub" id="planSub">Platz oder Sofa antippen</span></div>
       <div class="plan">
-        <svg viewBox="30 -12 516 384" role="group" aria-label="Raumplan mit Tisch, sechs Plätzen und Sofa">
+        <svg id="planSvg" viewBox="30 -12 516 384" role="group" aria-label="Raumplan mit Tisch, sechs Plätzen und Sofa">
           <rect class="tbl" x="110" y="60" width="300" height="140" rx="5"/>
           <text class="tbl-label" x="260" y="135" text-anchor="middle" id="tblLabel">Tisch</text>
           <g id="props" class="props" aria-hidden="true"></g>
@@ -633,7 +643,12 @@ const SUPABASE_JS  = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3
   // ---------- plan ----------
   const ns="http://www.w3.org/2000/svg";
   function svg(tag,attrs,parent){const e=document.createElementNS(ns,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e}
-  function drawSofa(el,s){
+  function drawSofa(el0,s){
+    let el=el0;
+    if(s.vertical){ // hochkant: Rückenlehne an der Wand rechts
+      el=svg("g",{transform:"translate("+(s.cx)+" "+(s.cy)+") rotate(90) translate(-100 -38)"},el0);
+      s={x:0,y:0,w:200,h:76};
+    }
     const {x,y,w,h}=s,arm=20,back=18;
     svg("rect",{class:"hit",x:x-6,y:y-6,width:w+12,height:h+12},el);
     svg("rect",{class:"frame",x,y,width:w,height:h,rx:12},el);
@@ -643,8 +658,9 @@ const SUPABASE_JS  = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3
     const cw=(w-2*arm-12)/2,cy=y+back+4,ch=h-back-10;
     svg("rect",{class:"shape",x:x+arm+4,y:cy,width:cw,height:ch,rx:7},el);
     svg("rect",{class:"shape",x:x+arm+8+cw,y:cy,width:cw,height:ch,rx:7},el);
-    svg("text",{class:"lab",x:x+w/2,y:cy+ch/2+5,"text-anchor":"middle"},el).textContent="Sofa";
     if(justBooked==="sofa")svg("rect",{class:"ring",x,y,width:w,height:h,rx:12},el);
+    if(el!==el0)svg("text",{class:"lab",x:+el0.dataset.cx-8,y:+el0.dataset.cy+5,"text-anchor":"middle"},el0).textContent="Sofa";
+    else svg("text",{class:"lab",x:x+w/2,y:cy+ch/2+5,"text-anchor":"middle"},el).textContent="Sofa";
   }
   // Tasse (Wochenende) oder Laptop (Werktag) am gewählten Platz
   // Position vor dem jeweiligen Stuhl: [Tasse], [Laptop]
@@ -699,8 +715,13 @@ const SUPABASE_JS  = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3
       svg("path",{class:"lap-body",d:"M-14 6.5 H14 L12 10 H-12 Z"},c);
     }
   }
+  const WIDE_SOFA={id:"sofa",vertical:true,cx:535,cy:130,x:497,y:30,w:76,h:200};
+  const TALL_SOFA={id:"sofa",x:336,y:284,w:200,h:76};
   function renderPlan(){
     const we=isWeekend(day);
+    const wideLayout=matchMedia("(min-width:1080px)").matches;
+    $("planSvg").setAttribute("viewBox",wideLayout?"30 -12 568 284":"30 -12 516 384");
+    SPOTS[SPOTS.length-1]=wideLayout?WIDE_SOFA:TALL_SOFA;
     $("tblLabel").textContent=we?"Kaffee":"Tisch";
     $("planSub").textContent=!day?"":we?"Kaffee-Spot antippen":"Platz oder Sofa antippen";
     drawProp(we);
@@ -714,7 +735,7 @@ const SUPABASE_JS  = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3
       el.setAttribute("aria-label",lbl(s.id)+", "+stTxt);
       if(justBooked===s.id)el.classList.add("just");
       svg("title",{},el).textContent=lbl(s.id)+(bs.length?"\n"+bs.map(b=>fmt(b.start_min)+"–"+fmt(b.end_min)+" "+b.name).join("\n"):locked?"":"\nfrei");
-      if(s.id==="sofa")drawSofa(el,s);
+      if(s.id==="sofa"){if(s.vertical){el.dataset.cx=s.cx;el.dataset.cy=s.cy}drawSofa(el,s)}
       else{svg("circle",{class:"hit",cx:s.x,cy:s.y,r:40},el);
         svg("circle",{class:"shape",cx:s.x,cy:s.y,r:s.r},el);
         if(justBooked===s.id)svg("circle",{class:"ring",cx:s.x,cy:s.y,r:s.r},el);
@@ -969,7 +990,30 @@ const SUPABASE_JS  = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3
   if(mq&&mq.addEventListener)mq.addEventListener("change",paintTheme);
   paintTheme();
 
-  renderAll();load();
+  // ---------- Grösse am Desktop: so gross wie möglich, alles auf einem Bildschirm ----------
+  const DESK=matchMedia("(min-width:1080px)");
+  let fitT=null,lastZ=1;
+  function fit(){
+    const html=document.documentElement;
+    if(!DESK.matches){html.style.zoom="";html.style.height="";lastZ=1;return}
+    let z=1;
+    for(let i=0;i<2;i++){ // zweimal, weil sich Umbrüche mit der Breite ändern
+      html.style.zoom=z;html.style.height=(innerHeight/z)+"px";
+      const top=document.querySelector(".top").offsetHeight;
+      const need=top+Math.max($("rules").closest(".area-info").offsetHeight,document.querySelector(".area-side").offsetHeight,560)+26;
+      // need ist in Layout-Pixeln gemessen; auf dem Bildschirm braucht es need × zoom
+      z=Math.max(1,Math.min(innerHeight/need,innerWidth/1320,1.7));
+    }
+    z=Math.round(z*100)/100;
+    html.style.zoom=z;html.style.height=(innerHeight/z)+"px";lastZ=z;
+  }
+  const refit=()=>{clearTimeout(fitT);fitT=setTimeout(fit,60)};
+  addEventListener("resize",refit);
+  if(DESK.addEventListener)DESK.addEventListener("change",()=>{renderPlan();refit()});
+  const _renderAll=renderAll;renderAll=function(){_renderAll();refit()};
+
+  renderAll();load();fit();
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit);
 })();
 </script>
 </body>
