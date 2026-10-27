@@ -5,12 +5,17 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Stauffacher 52</title>
 <meta name="robots" content="noindex">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'><style>.b{fill:%23141414}@media%20(prefers-color-scheme:dark){.b{fill:%23ececee}}</style><rect%20x='10'%20y='12'%20width='44'%20height='30'%20rx='4'%20fill='%232742c7'/><rect%20x='14'%20y='16'%20width='36'%20height='22'%20rx='1.5'%20fill='%23e8ecfb'/><path%20d='M17%2030h6M17%2025h14M17%2020h10'%20stroke='%232742c7'%20stroke-width='2.5'%20stroke-linecap='round'/><path%20class='b'%20d='M4%2046h56l-4%206H8z'/></svg>">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111113" media="(prefers-color-scheme: dark)">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Cstyle%3E.b%7Bfill:%23141414%7D@media%20(prefers-color-scheme:dark)%7B.b%7Bfill:%23ececee%7D%7D%3C/style%3E%3Crect%20x='10'%20y='12'%20width='44'%20height='30'%20rx='4'%20fill='%232742c7'/%3E%3Crect%20x='14'%20y='16'%20width='36'%20height='22'%20rx='1.5'%20fill='%23e8ecfb'/%3E%3Cpath%20d='M17%2030h6M17%2025h14M17%2020h10'%20stroke='%232742c7'%20stroke-width='2.5'%20stroke-linecap='round'/%3E%3Cpath%20class='b'%20d='M4%2046h56l-4%206H8z'/%3E%3C/svg%3E">
 <script>try{var t=localStorage.getItem("s52theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: desktop = three columns on one screen (Info | Tag + Plan + Übersicht | Buchen). Phone = one column, info first. */
+/* Layout
+   Phone  (<720):  Kopf · Statuszeile · Tag · Plan · Buchen · Übersicht · Kaffee · Regeln
+   Tablet (720+):  Plan | Buchen, Infos zweispaltig darunter
+   Desktop(1080+): Kopfzeile über alles, darunter Infos | Plan + Übersicht | Buchen */
 :root{
   --bg:#ffffff; --fg:#141414; --muted:#6b6b72; --faint:#9c9ca4; --line:#e6e6ea; --soft:#f5f5f7;
   --accent:#2742c7; --accent-soft:#e8ecfb; --taken:#d6d6dc; --part:#c9d2f5;
@@ -31,8 +36,11 @@
   --sofa:#2a2622; --sofa-line:#a89a8a; --coffee:#8a5634; --crema:#d9a46c; --steel:#5d6068; color-scheme:dark}
 
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 var(--sans);
-  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 var(--sans);-webkit-tap-highlight-color:transparent;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-bottom:env(safe-area-inset-bottom,0px)}
 h1{font-size:1.375rem;font-weight:600;margin:0;letter-spacing:-.015em}
 h2{font:500 .6875rem/1 var(--mono);text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin:0}
 h3{font-size:.9375rem;font-weight:600;margin:0}
@@ -41,60 +49,66 @@ p{margin:0}
 .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
 button{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-/* ---------- layout ---------- */
-.app{max-width:1400px;margin:0 auto;padding-block:28px 48px;display:grid;gap:28px;grid-template-columns:minmax(0,1fr)}
+/* ---------- top bar ---------- */
+.top{max-width:1400px;margin:0 auto;padding-block:20px 4px;display:grid;gap:12px;
+  grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"brand theme" "status status"}
+.brand{grid-area:brand;display:flex;flex-direction:column;gap:2px;min-width:0}
+.brand .tag{color:var(--muted)}
+.brand .addr{font:400 .8125rem var(--mono)}
+.theme-btn{grid-area:theme;align-self:start;flex:none;width:42px;height:42px;border-radius:50%;border:1px solid var(--line);
+  background:var(--bg);color:var(--fg);display:grid;place-items:center;cursor:pointer}
+.theme-btn:hover{background:var(--soft)}
+.theme-btn svg{width:19px;height:19px}
+.status-row{grid-area:status;display:flex;gap:8px;flex-wrap:wrap;align-items:center;min-width:0}
+.pill{display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:6px 12px;border-radius:999px;background:var(--soft);
+  font-size:.875rem;text-decoration:none;color:var(--fg);min-width:0;max-width:100%}
+.pill .dot{width:9px;height:9px;border-radius:50%;flex:none;background:var(--muted)}
+.pill.on{background:var(--ok-soft)} .pill.on .dot{background:var(--ok)}
+.pill.off{background:var(--off-soft)} .pill.off .dot{background:var(--off)}
+.today{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0}
+.today-lab{font:500 .6875rem var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-right:2px}
+.person{display:inline-flex;align-items:center;gap:6px;padding:4px 10px 4px 4px;border-radius:999px;border:1px solid var(--line);font-size:.8125rem;white-space:nowrap}
+.person .av{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font:600 .6875rem var(--sans);background:var(--accent-soft);color:var(--accent)}
+.person .tm{font:400 .75rem var(--mono);color:var(--muted)}
+.person.none{padding:4px 10px;color:var(--muted);border-style:dashed}
+
+/* ---------- main grid ---------- */
+.app{max-width:1400px;margin:0 auto;padding-block:16px 48px;display:grid;gap:24px;
+  grid-template-columns:minmax(0,1fr);grid-template-areas:"book" "side" "over" "info"}
+.area-book{grid-area:book} .area-side{grid-area:side} .area-over{grid-area:over} .area-info{grid-area:info}
 .col{display:flex;flex-direction:column;gap:16px;min-width:0}
+@media (min-width:720px){
+  .app{grid-template-columns:minmax(0,1fr) 320px;grid-template-areas:"book side" "over side" "info info";column-gap:28px}
+  .area-info{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+  .area-info .foot{grid-column:1/-1}
+  .area-side{position:sticky;top:16px;align-self:start}
+}
 @media (min-width:1080px){
-  html,body{height:100%}
-  .app{grid-template-columns:310px minmax(0,1fr) 340px;gap:32px;align-items:start;min-height:100%;padding-block:28px}
-  .col.side{position:sticky;top:28px}
+  .top{grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"brand status theme";align-items:center;column-gap:32px;
+    padding-block:16px 14px;border-bottom:1px solid var(--line)}
+  .brand{flex-direction:row;align-items:baseline;gap:14px;flex-wrap:wrap}
+  .brand .tag{display:none}
+  .status-row{justify-content:flex-end}
+  .pill.coffee-pill{display:none}
+  .theme-btn{align-self:center}
+  .app{grid-template-columns:300px minmax(0,1fr) 340px;grid-template-areas:"info book side" "info over side";column-gap:32px;row-gap:16px;padding-block:18px 32px}
+  .area-info{display:flex;flex-direction:column;gap:16px;position:sticky;top:22px;align-self:start}
+  .area-side{top:22px}
+  .area-book .plan svg{max-height:min(36vh,320px)}
+  .area-over .g-track{height:16px} .area-over .g-bar{line-height:16px}
+  .area-over .grid-inner{gap:3px}
 }
 
-/* ---------- info column ---------- */
-.brand{display:flex;flex-direction:column;gap:4px}
-.brand-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
-.theme-btn{flex:none;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--bg);color:var(--fg);
-  display:grid;place-items:center;cursor:pointer}
-.theme-btn:hover{background:var(--soft)}
-.theme-btn svg{width:18px;height:18px}
+/* ---------- info cards ---------- */
+.card{border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
 .card-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .ico{width:26px;height:26px;flex:none}
-.coffee .ico{color:var(--muted)}
-.coffee.on .ico{color:var(--ok)}
-.coffee.off .ico{color:var(--off)}
-.rules .ico{color:var(--warn)}
-.coffee .steam{opacity:0}
-.coffee.on .steam{opacity:.9}
-/* weekend: a cup in front of every coffee spot */
-.cups .cup{fill:var(--bg);stroke:var(--fg);stroke-width:1.3}
-.cups .cup-h{fill:none;stroke:var(--fg);stroke-width:1.3}
-.cups .saucer{stroke:var(--fg);stroke-width:1.3;stroke-linecap:round}
-.cups .coffee-top{fill:var(--coffee)}
-.cups .crema{fill:var(--crema)}
-.cups .wisp{fill:none;stroke:var(--faint);stroke-width:1.3;stroke-linecap:round;opacity:.7}
-@media (prefers-reduced-motion:no-preference){
-  .cups .wisp{animation:wisp 3.2s ease-out infinite;opacity:0}
-  .coffee.on .steam path{animation:steam 2.4s ease-in-out infinite}
-  .coffee.on .steam path:nth-child(2){animation-delay:.6s}
-}
-.cups .lap-body{fill:var(--steel);stroke:var(--fg);stroke-width:1.2}
-.cups .lap-display{fill:var(--accent-soft)}
-.cups .lap-line{stroke:var(--accent);stroke-width:1.4;stroke-linecap:round}
-.cups .lap-cursor{fill:var(--accent)}
-.cups .prop{transform-box:fill-box;transform-origin:50% 100%}
-@media (prefers-reduced-motion:no-preference){
-  .cups .prop{animation:pop .28s cubic-bezier(.3,1.4,.6,1)}
-  .cups .lap-cursor{animation:blink 1s steps(1) infinite}
-}
-@keyframes pop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
-@keyframes blink{50%{opacity:0}}
-@keyframes wisp{0%{opacity:0;transform:translateY(3px)}30%{opacity:.85}80%,100%{opacity:0;transform:translateY(-7px)}}
-@keyframes steam{0%,100%{transform:translateY(1px);opacity:.4}50%{transform:translateY(-1.5px);opacity:1}}
-.card{border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
-.coffee{background:var(--soft);border-color:transparent}
-.coffee.on{background:var(--ok-soft)}
-.coffee.off{background:var(--off-soft)}
+.coffee{background:var(--soft);border-color:transparent;scroll-margin-top:16px}
+.coffee.on{background:var(--ok-soft)} .coffee.off{background:var(--off-soft)}
+.coffee .ico{color:var(--muted)} .coffee.on .ico{color:var(--ok)} .coffee.off .ico{color:var(--off)}
+.coffee .steam{opacity:0} .coffee.on .steam{opacity:.9}
 .coffee-now{display:flex;align-items:center;gap:10px}
 .pulse{width:12px;height:12px;border-radius:50%;flex:none;background:var(--muted)}
 .coffee.on .pulse{background:var(--ok);box-shadow:0 0 0 4px color-mix(in srgb,var(--ok) 22%,transparent)}
@@ -106,199 +120,215 @@ button{font:inherit;color:inherit}
 .win.cur{border-color:var(--ok);color:var(--ok)}
 .facts{display:grid;grid-template-columns:4rem 1fr;gap:3px 10px;margin:0;font-size:.84375rem;line-height:1.45}
 .facts dt{color:var(--muted)} .facts dd{margin:0;min-width:0}
-.rules{border-color:var(--warn-soft);background:var(--warn-soft)}
-.rules h2{color:var(--warn)}
-.rules ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:7px;font-size:.84375rem;line-height:1.45}
+.rules{border-color:var(--warn-soft);background:var(--warn-soft);gap:0}
+.rules summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:32px}
+.rules summary::-webkit-details-marker{display:none}
+.rules summary h2{color:var(--warn)}
+.rules .ico{color:var(--warn)}
+.rules .chev{width:18px;height:18px;color:var(--warn);transition:transform .2s}
+.rules[open] .chev{transform:rotate(180deg)}
+.rules .sum-hint{font-size:.8125rem;color:var(--warn);margin-left:auto;margin-right:6px}
+.rules[open] .sum-hint{display:none}
+.rules ul{margin:10px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:7px;font-size:.84375rem;line-height:1.45}
 .rules li{display:grid;grid-template-columns:4rem 1fr;gap:10px}
 .rules b{font-weight:600;color:var(--warn)}
 .foot{font-size:.75rem;color:var(--muted)}
+@media (min-width:1080px){.rules summary{cursor:default}.rules .chev,.rules .sum-hint{display:none}}
 
-/* ---------- booking column ---------- */
-.step-head{display:flex;align-items:baseline;gap:10px;margin-bottom:10px}
+/* ---------- booking ---------- */
+.step-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;min-height:32px}
 .step-no{font:500 .75rem var(--mono);color:var(--faint)}
 .step-sub{font-size:.8125rem;color:var(--muted);margin-left:auto;text-align:right}
 .weeknav{margin-left:auto;display:flex;align-items:center;gap:6px}
-.weeknav .step-sub{margin:0;min-width:8.5rem;text-align:center}
-.weeknav .btn{font:500 1rem/1 var(--mono);padding:4px 10px}
-.day.we .ds{color:var(--warn)}
-.day[aria-pressed="true"].we .ds{color:var(--bg)}
-.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
-.day{display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 4px;border:1px solid var(--line);
-  border-radius:8px;background:var(--bg);cursor:pointer;min-width:0}
+.weeknav .lab{font:400 .8125rem var(--mono);color:var(--muted);min-width:7.5rem;text-align:center}
+.navbtn{width:40px;height:36px;border-radius:8px;border:1px solid var(--line);background:var(--bg);cursor:pointer;display:grid;place-items:center}
+.navbtn:hover:not(:disabled){background:var(--soft)}
+.navbtn:disabled{opacity:.35;cursor:default}
+.navbtn svg{width:16px;height:16px}
+.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;touch-action:pan-y}
+.day{display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 2px;min-height:58px;border:1px solid var(--line);
+  border-radius:10px;background:var(--bg);cursor:pointer;min-width:0}
+.day:hover:not(:disabled):not([aria-pressed="true"]){border-color:var(--faint)}
 .day .wd{font:500 .6875rem var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
 .day .dn{font:500 1.0625rem/1.2 var(--mono)}
 .day .ds{font-size:.6875rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.day .s{display:none}
+@media (max-width:1079px){.day .l{display:none}.day .s{display:inline}}
+.day.we .ds{color:var(--warn)}
 .day[aria-pressed="true"]{border-color:var(--fg);background:var(--fg);color:var(--bg)}
 .day[aria-pressed="true"] .wd,.day[aria-pressed="true"] .ds{color:var(--bg);opacity:.75}
 .day:disabled{cursor:default;background:var(--soft);color:var(--faint);border-color:transparent}
 .day:disabled .wd,.day:disabled .ds{color:var(--faint)}
 .day.today .dn{text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:2px}
+.swipe-hint{display:none;font-size:.75rem;color:var(--faint);text-align:center;margin-top:6px}
+@media (hover:none){.swipe-hint{display:block}}
 
-.plan{border:1px solid var(--line);border-radius:12px;background:var(--soft);padding:10px 12px}
-.plan svg{display:block;width:100%;height:auto;max-height:min(46vh,380px);margin:0 auto}
+.plan{border:1px solid var(--line);border-radius:14px;background:var(--soft);padding:8px 10px}
+.plan svg{display:block;width:100%;height:auto;max-height:min(48vh,400px);margin:0 auto;touch-action:manipulation}
 .tbl{fill:var(--bg);stroke:var(--fg);stroke-width:1.5}
 .tbl-label{fill:var(--faint);font:400 14px var(--mono)}
 .spot{cursor:pointer}
+.spot .hit{fill:transparent;stroke:none}
 .spot .shape{fill:var(--bg);stroke:var(--fg);stroke-width:1.5}
-.spot .lab{fill:var(--fg);font:500 17px var(--mono);pointer-events:none}
+.spot .lab{fill:var(--fg);font:500 18px var(--mono);pointer-events:none}
 .spot.part .shape{fill:var(--part);stroke:var(--part)}
 .spot.full .shape{fill:var(--taken);stroke:var(--taken)}
 .spot.full .lab{fill:var(--muted)}
 .spot.mine .shape{fill:var(--accent);stroke:var(--accent)}
 .spot.mine .lab{fill:var(--bg)}
+@media (hover:hover){.spot:not(.locked):hover .shape{stroke:var(--accent);stroke-width:2.5}.sofa:not(.locked):hover .frame{stroke:var(--accent)}}
 .spot.sel .shape{stroke:var(--accent);stroke-width:3.5}
 .spot.locked{cursor:not-allowed}
 .spot.locked .shape{fill:var(--soft);stroke:var(--line);stroke-dasharray:4 3}
 .spot.locked .lab{fill:var(--faint)}
-.sofa.locked .frame{fill:var(--soft);stroke:var(--line);stroke-dasharray:4 3}
 .spot:focus{outline:none}
 .spot:focus-visible .shape{stroke:var(--accent);stroke-width:3.5}
-/* sofa: frame stays sofa-coloured, cushions carry the booking state */
 .sofa .frame{fill:var(--sofa);stroke:var(--sofa-line);stroke-width:1.5}
 .sofa .shape{fill:var(--bg);stroke:var(--sofa-line);stroke-width:1.2}
-.sofa .seam{stroke:var(--sofa-line);stroke-width:1;opacity:.5}
-.sofa .lab{font:500 14px var(--mono)}
+.sofa .lab{font:500 15px var(--mono)}
 .sofa.sel .frame,.sofa:focus-visible .frame{stroke:var(--accent);stroke-width:3}
 .sofa.sel .shape{stroke:var(--sofa-line);stroke-width:1.2}
-.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.75rem;color:var(--muted);padding:6px 2px 0}
+.sofa.locked .frame{fill:var(--soft);stroke:var(--line);stroke-dasharray:4 3}
+.legend{display:flex;gap:6px 14px;flex-wrap:wrap;font-size:.75rem;color:var(--muted);padding:4px 2px 2px}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px;border:1.5px solid var(--fg)}
 
-.grid{overflow-x:auto}
-.grid-inner{min-width:300px;display:flex;flex-direction:column;gap:3px}
-.g-row{display:grid;grid-template-columns:4.25rem 1fr;align-items:center;gap:8px}
-.g-lab{font:500 .75rem var(--mono)}
-.g-track{position:relative;height:15px;background:var(--soft);border-radius:3px;
-  background-image:repeating-linear-gradient(90deg,transparent 0,transparent calc(100%/var(--seg,9) - 1px),var(--line) calc(100%/var(--seg,9) - 1px),var(--line) calc(100%/var(--seg,9)))}
-.g-bar{position:absolute;top:0;bottom:0;background:var(--taken);border-radius:3px;font:400 10px/15px var(--sans);padding:0 4px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-.g-bar.mine{background:var(--accent);color:var(--bg)}
-.g-axis{display:grid;grid-template-columns:4.25rem 1fr;gap:8px;font:400 .6875rem var(--mono);color:var(--muted);margin-bottom:2px}
-.g-axis div:last-child{display:flex;justify-content:space-between}
+/* props on the table */
+.props .cup{fill:var(--bg);stroke:var(--fg);stroke-width:1.3}
+.props .cup-h{fill:none;stroke:var(--fg);stroke-width:1.3}
+.props .saucer{stroke:var(--fg);stroke-width:1.3;stroke-linecap:round}
+.props .crema{fill:var(--crema)}
+.props .wisp{fill:none;stroke:var(--faint);stroke-width:1.3;stroke-linecap:round;opacity:.7}
+.props .lap-body{fill:var(--steel);stroke:var(--fg);stroke-width:1.2}
+.props .lap-display{fill:var(--accent-soft)}
+.props .lap-line{stroke:var(--accent);stroke-width:1.4;stroke-linecap:round}
+.props .lap-cursor{fill:var(--accent)}
+.props .prop{transform-box:fill-box;transform-origin:50% 100%}
 
-/* ---------- side column ---------- */
-.panel{border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:13px}
-.panel[aria-disabled="true"] .field,.panel[aria-disabled="true"] .btn{opacity:.5}
+/* panel */
+.panel{border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:14px;scroll-margin-top:12px;background:var(--bg)}
+.panel[aria-disabled="true"] .field,.panel[aria-disabled="true"] #book{opacity:.5}
 .panel-title{display:flex;flex-direction:column;gap:2px}
+.panel-title strong{font-size:1.0625rem;font-weight:600}
 .slots{display:flex;flex-wrap:wrap;gap:6px}
 .chip{font:400 .8125rem var(--mono);padding:3px 8px;border-radius:999px;background:var(--soft);color:var(--muted)}
 .chip.mine{background:var(--accent-soft);color:var(--accent)}
 .field{display:flex;flex-direction:column;gap:6px}
 .field label,.field .lbl{font-size:.8125rem;color:var(--muted)}
+.quick{display:flex;flex-wrap:wrap;gap:6px}
+.qbtn{min-height:38px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--bg);font-size:.875rem;cursor:pointer}
+.qbtn:hover:not(:disabled){border-color:var(--faint)}
+.qbtn[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.qbtn:disabled{opacity:.35;cursor:default}
 .row2{display:flex;gap:8px;align-items:center}
 .row2 select{flex:1}
-input[type=text],select{font:inherit;padding:9px 11px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg);min-width:0}
+input[type=text],select{font:inherit;font-size:16px;min-height:44px;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);min-width:0}
 input[type=text]{width:100%}
 select{font-family:var(--mono)}
-.btn{font:500 .9375rem var(--sans);padding:10px 16px;border-radius:6px;border:1px solid var(--fg);background:var(--fg);color:var(--bg);cursor:pointer}
+.btn{font:500 1rem var(--sans);min-height:48px;padding:10px 16px;border-radius:10px;border:1px solid var(--fg);background:var(--fg);color:var(--bg);cursor:pointer}
 .btn.ghost{background:none;color:var(--fg);border-color:var(--line)}
-.btn.small{font-size:.8125rem;padding:3px 10px}
+.btn.small{font-size:.8125rem;min-height:34px;padding:4px 12px;border-radius:8px}
 .btn:disabled{opacity:.4;cursor:default}
 .btn.wide{width:100%}
-.status{font-size:.875rem;min-height:1.4em}
+.status{font-size:.875rem}
 .status:empty{display:none}
-.note{font-size:.8125rem;padding:8px 10px;border-radius:6px;background:var(--warn-soft);color:var(--warn)}
+.status.ok{color:var(--ok)} .status.err{color:var(--off)}
+.note{font-size:.8125rem;padding:8px 10px;border-radius:8px;background:var(--warn-soft);color:var(--warn)}
 .list{border-top:1px solid var(--line)}
 .item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:.875rem}
 .item > span{min-width:0}
 
-/* ---------- dialog ---------- */
-dialog{border:1px solid var(--line);border-radius:12px;padding:22px;max-width:min(420px,calc(100vw - 32px));background:var(--bg);color:var(--fg)}
+/* overview */
+.over-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.live{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-size:.75rem;color:var(--muted)}
+.live i{width:7px;height:7px;border-radius:50%;background:var(--faint)}
+.live.on i{background:var(--ok)}
+.grid{overflow-x:auto}
+.grid-inner{min-width:300px;display:flex;flex-direction:column;gap:4px}
+.g-row{display:grid;grid-template-columns:4.25rem 1fr;align-items:center;gap:8px;border-radius:4px;cursor:pointer}
+.g-row:hover .g-lab{color:var(--accent)}
+.g-row.sel .g-lab{color:var(--accent);font-weight:600}
+.g-lab{font:500 .75rem var(--mono)}
+.g-track{position:relative;height:18px;background:var(--soft);border-radius:4px;
+  background-image:repeating-linear-gradient(90deg,transparent 0,transparent calc(100%/var(--seg,9) - 1px),var(--line) calc(100%/var(--seg,9) - 1px),var(--line) calc(100%/var(--seg,9)))}
+.g-bar{position:absolute;top:0;bottom:0;background:var(--taken);border-radius:4px;font:400 10px/18px var(--sans);padding:0 5px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.g-bar.mine{background:var(--accent);color:var(--bg)}
+.g-axis{display:grid;grid-template-columns:4.25rem 1fr;gap:8px;font:400 .6875rem var(--mono);color:var(--muted);margin-bottom:2px}
+.g-axis div:last-child{display:flex;justify-content:space-between}
+
+/* dialog */
+dialog{border:1px solid var(--line);border-radius:14px;padding:22px;max-width:min(420px,calc(100vw - 32px));background:var(--bg);color:var(--fg)}
 dialog::backdrop{background:rgba(10,10,14,.45)}
 dialog h3{font-size:1.0625rem;margin-bottom:8px}
 dialog p{color:var(--muted)}
 .dlg-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;flex-wrap:wrap}
+.dlg-actions .btn{min-height:44px}
 
 @media (max-width:480px){
-  .day{padding:7px 2px} .day .dn{font-size:1rem} .day .ds{display:none}
+  h1{font-size:1.25rem}
+  .day{padding:7px 1px;min-height:54px} .day .dn{font-size:1rem} .day .ds{font-size:.625rem}
+  .weeknav .lab{min-width:0;font-size:.75rem}
+  .panel{padding:14px}
 }
-@media (prefers-reduced-motion:no-preference){.spot .shape{transition:fill .15s,stroke .15s}}
+
+/* motion */
+@media (prefers-reduced-motion:no-preference){
+  .spot .shape{transition:fill .15s,stroke .15s}
+  .props .prop{animation:pop .28s cubic-bezier(.3,1.4,.6,1)}
+  .props .lap-cursor{animation:blink 1s steps(1) infinite}
+  .props .wisp{animation:wisp 3.2s ease-out infinite;opacity:0}
+  .coffee.on .steam path{animation:steam 2.4s ease-in-out infinite}
+  .coffee.on .steam path:nth-child(2){animation-delay:.6s}
+  .week.slide-l{animation:slideL .22s ease-out} .week.slide-r{animation:slideR .22s ease-out}
+}
+@keyframes pop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
+@keyframes blink{50%{opacity:0}}
+@keyframes wisp{0%{opacity:0;transform:translateY(3px)}30%{opacity:.85}80%,100%{opacity:0;transform:translateY(-7px)}}
+@keyframes steam{0%,100%{transform:translateY(1px);opacity:.4}50%{transform:translateY(-1.5px);opacity:1}}
+@keyframes slideL{from{opacity:.3;transform:translateX(24px)}to{opacity:1;transform:none}}
+@keyframes slideR{from{opacity:.3;transform:translateX(-24px)}to{opacity:1;transform:none}}
 </style>
 </head>
 <body>
+
+<header class="top">
+  <div class="brand">
+    <h1>Stauffacher 52</h1>
+    <p class="tag">Freunde dürfen hier vorbeikommen, arbeiten und guten Kaffee geniessen.</p>
+    <p class="addr">Stauffacherstrasse 52, Zürich Wiedikon</p>
+  </div>
+  <div class="status-row">
+    <a class="pill coffee-pill" id="coffeePill" href="#coffee"><span class="dot"></span><span id="coffeePillTxt">Kaffee …</span></a>
+    <div class="today" id="today" aria-live="polite"></div>
+  </div>
+  <button class="theme-btn" id="themeBtn" type="button" aria-label="Dunkler Modus" title="Dunkler Modus">
+    <svg id="themeIco" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>
+  </button>
+</header>
+
 <main class="app">
 
-  <!-- ===== Info ===== -->
-  <aside class="col info">
-    <div class="brand">
-      <div class="brand-top">
-        <h1>Stauffacher 52</h1>
-        <button class="theme-btn" id="themeBtn" type="button" aria-label="Dunkler Modus" title="Dunkler Modus">
-          <svg id="themeIco" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>
-        </button>
-      </div>
-      <p class="muted">Homeoffice in Zürich Wiedikon. Freunde dürfen hier vorbeikommen, arbeiten und guten Kaffee geniessen.</p>
-      <p class="mono" style="font-size:.8125rem">Stauffacherstrasse 52, Zürich</p>
-    </div>
-
-    <section class="card coffee" id="coffee" aria-labelledby="h-coffee">
-      <div class="card-head">
-        <h2 id="h-coffee">Kaffee</h2>
-        <svg class="ico" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <g class="steam"><path d="M12 4c-1.5 2 1.5 3 0 5"/><path d="M17 4c-1.5 2 1.5 3 0 5"/></g>
-          <path d="M6 13h17v6a7 7 0 0 1-7 7h-3a7 7 0 0 1-7-7z"/>
-          <path d="M23 15h2a3 3 0 0 1 0 6h-2.5"/>
-          <path d="M4 29h21"/>
-        </svg>
-      </div>
-      <div class="coffee-now">
-        <span class="pulse" aria-hidden="true"></span>
-        <div>
-          <p class="coffee-state" id="coffeeState">Maschine …</p>
-          <p class="coffee-next" id="coffeeNext"></p>
-        </div>
-      </div>
-      <div class="windows" id="windows" aria-label="Betriebszeiten heute"></div>
-      <dl class="facts">
-        <dt>Zeiten</dt><dd class="mono" style="font-size:.8125rem">Di–Fr 09–12, 13–16<br>Sa–So 11–15<br>Mo aus</dd>
-        <dt>Maschine</dt><dd>Rocket R58 Tune</dd>
-        <dt>Bohnen</dt><dd>Specialty Coffee, Indien oder Honduras</dd>
-        <dt>Milch</dt><dd>Nur Proteinmilch, eigene darfst du mitbringen</dd>
-      </dl>
-    </section>
-
-    <section class="card rules" aria-labelledby="h-rules">
-      <div class="card-head">
-        <h2 id="h-rules">Hausregeln</h2>
-        <svg class="ico" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M4 15 16 5l12 10"/>
-          <path d="M7 13v14h18V13"/>
-          <path d="M13 27v-7h6v7"/>
-          <path d="M22 7V4h3v5.5"/>
-        </svg>
-      </div>
-      <ul>
-        <li><b>Di–Fr</b><span>Arbeitsplätze 08:30–16:00</span></li>
-        <li><b>Sa–So</b><span>Nur Kaffee-Spots, 11:00–15:00</span></li>
-        <li><b>Montag</b><span>Ausgebucht, Julian ist in Bern</span></li>
-        <li><b>Vorlauf</b><span>Bis drei Wochen im Voraus</span></li>
-        <li><b>Sofa</b><span>Nur Sandro Gantner, Nap max. 1 Std., Di–Fr</span></li>
-        <li><b>Tim</b><span>Tim Wünsch: Hausverbot bei unangekündigtem Besuch oder über 30 Min. Verspätung</span></li>
-      </ul>
-    </section>
-
-    <p class="foot">Buchungen sind für alle sichtbar. Stornieren kannst du nur auf dem Gerät, mit dem du gebucht hast.</p>
-  </aside>
-
   <!-- ===== Tag + Plan ===== -->
-  <section class="col" aria-labelledby="h-book">
-    <h2 id="h-book" class="sr" style="position:absolute;left:-9999px">Platz buchen</h2>
+  <section class="col area-book" aria-labelledby="h-book">
+    <h2 id="h-book" class="sr">Platz buchen</h2>
     <div>
       <div class="step-head"><span class="step-no">1</span><h3>Tag</h3>
         <div class="weeknav">
-          <button class="btn ghost small" id="prevWeek" aria-label="Vorherige Woche">‹</button>
-          <span class="step-sub mono" id="weekLabel"></span>
-          <button class="btn ghost small" id="nextWeek" aria-label="Nächste Woche">›</button>
+          <button class="navbtn" id="prevWeek" type="button" aria-label="Vorherige Woche"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3 5 8l5 5"/></svg></button>
+          <span class="lab" id="weekLabel"></span>
+          <button class="navbtn" id="nextWeek" type="button" aria-label="Nächste Woche"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 3 5 5-5 5"/></svg></button>
         </div>
       </div>
-      <div class="week" id="week" role="group" aria-label="Tag in dieser Woche wählen"></div>
+      <div class="week" id="week" role="group" aria-label="Tag wählen"></div>
+      <p class="swipe-hint">Wischen für die nächste Woche</p>
     </div>
 
     <div>
       <div class="step-head"><span class="step-no">2</span><h3>Platz</h3><span class="step-sub" id="planSub">Platz oder Sofa antippen</span></div>
       <div class="plan">
-        <svg viewBox="0 -8 560 338" role="group" aria-label="Raumplan mit Tisch, sechs Plätzen und Sofa">
+        <svg viewBox="36 -14 504 344" role="group" aria-label="Raumplan mit Tisch, sechs Plätzen und Sofa">
           <rect class="tbl" x="120" y="62" width="280" height="100" rx="4"/>
           <text class="tbl-label" x="260" y="117" text-anchor="middle" id="tblLabel">Tisch</text>
-          <g id="cups" class="cups" aria-hidden="true"></g>
+          <g id="props" class="props" aria-hidden="true"></g>
           <g id="spots"></g>
         </svg>
         <div class="legend">
@@ -309,22 +339,16 @@ dialog p{color:var(--muted)}
         </div>
       </div>
     </div>
-
-    <div>
-      <div class="step-head"><h3 style="font-weight:500" class="muted">Übersicht <span id="dayName"></span></h3></div>
-      <div class="grid"><div class="grid-inner" id="grid"></div></div>
-      <div class="list" id="dayList" hidden style="margin-top:12px"></div>
-    </div>
   </section>
 
   <!-- ===== Buchen ===== -->
-  <section class="col side" aria-label="Buchen">
+  <section class="col area-side" aria-label="Buchen">
     <div>
       <div class="step-head"><span class="step-no">3</span><h3>Zeit und Name</h3></div>
       <div class="panel" id="panel" aria-disabled="true">
         <div class="panel-title">
           <strong id="panelTitle">Noch kein Platz gewählt</strong>
-          <span class="muted" style="font-size:.8125rem" id="panelRule">Wähl links einen Platz oder das Sofa.</span>
+          <span class="muted" style="font-size:.8125rem" id="panelRule">Wähl einen Platz im Plan.</span>
         </div>
         <div class="field">
           <span class="lbl">Schon gebucht</span>
@@ -332,7 +356,11 @@ dialog p{color:var(--muted)}
         </div>
         <div class="field">
           <label for="name">Dein Name</label>
-          <input type="text" id="name" maxlength="40" placeholder="Vorname Nachname" autocomplete="name">
+          <input type="text" id="name" maxlength="40" placeholder="Vorname Nachname" autocomplete="name" enterkeyhint="done">
+        </div>
+        <div class="field">
+          <span class="lbl" id="quickLbl">Dauer</span>
+          <div class="quick" id="quick" role="group" aria-labelledby="quickLbl"></div>
         </div>
         <div class="field">
           <label for="from">Zeit</label>
@@ -344,7 +372,7 @@ dialog p{color:var(--muted)}
         </div>
         <p class="note" id="sofaNote" hidden>Das Sofa ist für Sandro reserviert, für einen Nap von höchstens 1 Stunde.</p>
         <p class="note" id="weNote" hidden>Am Wochenende gibt es nur Kaffee-Spots, von 11:00 bis 15:00.</p>
-        <button class="btn wide" id="book" disabled>Buchen</button>
+        <button class="btn wide" id="book" type="button" disabled>Buchen</button>
         <p class="status" id="status" role="status"></p>
       </div>
     </div>
@@ -354,6 +382,59 @@ dialog p{color:var(--muted)}
       <div class="list" id="mineList"></div>
     </div>
   </section>
+
+  <!-- ===== Übersicht ===== -->
+  <section class="area-over" aria-labelledby="h-over">
+    <div class="over-head"><h3 id="h-over" style="font-weight:500" class="muted">Übersicht <span id="dayName"></span></h3>
+      <span class="live" id="live"><i></i><span id="liveTxt">Verbinde …</span></span></div>
+    <div class="grid"><div class="grid-inner" id="grid"></div></div>
+    <div class="list" id="dayList" hidden style="margin-top:12px"></div>
+  </section>
+
+  <!-- ===== Infos ===== -->
+  <aside class="area-info">
+    <section class="card coffee" id="coffee" aria-labelledby="h-coffee">
+      <div class="card-head">
+        <h2 id="h-coffee">Kaffee</h2>
+        <svg class="ico" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <g class="steam"><path d="M12 4c-1.5 2 1.5 3 0 5"/><path d="M17 4c-1.5 2 1.5 3 0 5"/></g>
+          <path d="M6 13h17v6a7 7 0 0 1-7 7h-3a7 7 0 0 1-7-7z"/><path d="M23 15h2a3 3 0 0 1 0 6h-2.5"/><path d="M4 29h21"/>
+        </svg>
+      </div>
+      <div class="coffee-now">
+        <span class="pulse" aria-hidden="true"></span>
+        <div><p class="coffee-state" id="coffeeState">Maschine …</p><p class="coffee-next" id="coffeeNext"></p></div>
+      </div>
+      <div class="windows" id="windows" aria-label="Betriebszeiten heute"></div>
+      <dl class="facts">
+        <dt>Zeiten</dt><dd class="mono" style="font-size:.8125rem">Di–Fr 09–12, 13–16<br>Sa–So 11–15<br>Mo aus</dd>
+        <dt>Maschine</dt><dd>Rocket R58 Tune</dd>
+        <dt>Bohnen</dt><dd>Specialty Coffee, Indien oder Honduras</dd>
+        <dt>Milch</dt><dd>Nur Proteinmilch, eigene darfst du mitbringen</dd>
+      </dl>
+    </section>
+
+    <details class="card rules" id="rules">
+      <summary>
+        <span style="display:flex;align-items:center;gap:10px"><h2>Hausregeln</h2></span>
+        <span class="sum-hint">6 Regeln</span>
+        <svg class="ico" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 15 16 5l12 10"/><path d="M7 13v14h18V13"/><path d="M13 27v-7h6v7"/><path d="M22 7V4h3v5.5"/>
+        </svg>
+        <svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg>
+      </summary>
+      <ul>
+        <li><b>Di–Fr</b><span>Arbeitsplätze 08:30–16:00</span></li>
+        <li><b>Sa–So</b><span>Nur Kaffee-Spots, 11:00–15:00</span></li>
+        <li><b>Montag</b><span>Ausgebucht, Julian ist in Bern</span></li>
+        <li><b>Vorlauf</b><span>Bis drei Wochen im Voraus</span></li>
+        <li><b>Sofa</b><span>Nur Sandro Gantner, Nap max. 1 Std., Di–Fr</span></li>
+        <li><b>Tim</b><span>Tim Wünsch: Hausverbot bei unangekündigtem Besuch oder über 30 Min. Verspätung</span></li>
+      </ul>
+    </details>
+
+    <p class="foot">Buchungen sind für alle sichtbar. Stornieren kannst du nur auf dem Gerät, mit dem du gebucht hast.</p>
+  </aside>
 </main>
 
 <dialog id="dlg" aria-labelledby="dlgTitle">
@@ -366,6 +447,7 @@ dialog p{color:var(--muted)}
 // ---- Supabase (Project Settings → API) ----
 const SUPABASE_URL = "https://btgzepbllyughyfjwuve.supabase.co";
 const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
+const SUPABASE_JS  = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js";
 // --------------------------------------------
 
 (function(){
@@ -376,7 +458,7 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
     {id:"6",x:74,y:112,r:27},
     {id:"sofa",x:330,y:246,w:200,h:76}];
   const STEP=30,MAX_SEAT=480,MAX_SOFA=60,WEEKS=4;
-  // Buchbare Zeiten pro Wochentag (1=Mo … 7=So), in Minuten ab Mitternacht
+  // Buchbare Zeiten pro Wochentag (1=Mo … 7=So), Minuten ab Mitternacht
   const HOURS={2:[510,960],3:[510,960],4:[510,960],5:[510,960],6:[660,900],7:[660,900]};
   // Kaffeemaschine pro Wochentag
   const MACHINE={2:[[540,720],[780,960]],3:[[540,720],[780,960]],4:[[540,720],[780,960]],5:[[540,720],[780,960]],6:[[660,900]],7:[[660,900]]};
@@ -386,6 +468,7 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
   const $=s=>document.getElementById(s);
   const isSandro=n=>/sandro/i.test(n);
   const isTim=n=>/tim/i.test(n);
+  const narrow=()=>matchMedia("(max-width:719px)").matches;
 
   // ---------- helpers ----------
   const fmt=m=>String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0");
@@ -400,6 +483,7 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
   const dm=s=>{const d=toDate(s);return d.getUTCDate()+"."+(d.getUTCMonth()+1)+"."};
   function getStore(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v??d}catch(e){return d}}
   function setStore(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+  function setStatus(t,kind){const s=$("status");s.textContent=t||"";s.className="status"+(kind?" "+kind:"")}
 
   // ---------- state ----------
   const today=zNow().ymd;
@@ -411,7 +495,7 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
   setWeek(0);
   let day=week.find(bookable)||null;
   if(!day){setWeek(1);day=week.find(bookable)||null}
-  let sel=null,list=[],weekList=[],loaded=false,adminKey=null;
+  let sel=null,list=[],allList=[],loaded=false,adminKey=null;
   let mine=getStore("s52tokens",{});
   const isMine=b=>!!mine[b.id];
   try{const n=localStorage.getItem("s52name");if(n)$("name").value=n}catch(e){}
@@ -428,7 +512,7 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
     const m=((e&&e.message)||"")+" "+((e&&e.details)||"");
     if(m.includes("no_overlap"))return"Dieser Platz ist in dieser Zeit schon gebucht.";
     if(m.includes("sofa_sandro"))return"Das Sofa ist nur für Sandro.";
-    if(m.includes("max_length"))return sel==="sofa"?"Ein Nap dauert höchstens 1 Stunde.":"Höchstens 8 Stunden am Stück.";
+    if(m.includes("max_length"))return"Ein Nap dauert höchstens 1 Stunde.";
     if(m.includes("weekend_coffee"))return"Am Wochenende gibt es nur Kaffee-Spots, kein Sofa.";
     if(m.includes("opening_hours"))return"An diesem Tag ist nur "+fmt(OPEN)+"–"+fmt(CLOSE)+" buchbar.";
     if(m.includes("not_monday")||m.includes("Montag"))return"Montags ist alles ausgebucht, Julian ist in Bern.";
@@ -456,10 +540,28 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
     [{label:"Abbrechen",value:false},{label:"Ich bin pünktlich, buchen",value:true,primary:true}]);
 
   // ---------- data helpers ----------
-  const forSpot=(k,src)=>(src||list).filter(b=>b.seat===k).sort((a,b)=>a.start_min-b.start_min);
-  function covered(bs,limit){let t=OPEN;for(const b of bs){if(b.start_min>t)return false;t=Math.max(t,b.end_min)}return t>=CLOSE}
+  const forSpot=k=>list.filter(b=>b.seat===k).sort((a,b)=>a.start_min-b.start_min);
+  function covered(bs){let t=OPEN;for(const b of bs){if(b.start_min>t)return false;t=Math.max(t,b.end_min)}return t>=CLOSE}
   function earliest(){return day===today?Math.max(OPEN,Math.ceil(zNow().min/STEP)*STEP):OPEN}
-  const forDayFromWeek=()=>weekList.filter(b=>b.day===day);
+  const forDay=d=>allList.filter(b=>b.day===d);
+  const busyAt=(m,bs)=>bs.some(b=>m>=b.start_min&&m<b.end_min);
+  const free=(s,e,bs)=>s<e&&!bs.some(b=>b.start_min<e&&s<b.end_min);
+
+  // ---------- heute da ----------
+  function renderToday(){
+    const T=$("today");T.textContent="";
+    const lab=document.createElement("span");lab.className="today-lab";lab.textContent="Heute da";T.appendChild(lab);
+    if(isoDow(today)===1){const p=document.createElement("span");p.className="person none";p.textContent="Montag, Julian ist in Bern";T.appendChild(p);return}
+    const by={};forDay(today).sort((a,b)=>a.start_min-b.start_min).forEach(b=>{const k=b.name.trim().toLowerCase();
+      if(!by[k])by[k]={name:b.name.trim(),s:b.start_min,e:b.end_min};else{by[k].s=Math.min(by[k].s,b.start_min);by[k].e=Math.max(by[k].e,b.end_min)}});
+    const ps=Object.values(by);
+    if(!ps.length){const p=document.createElement("span");p.className="person none";p.textContent=loaded?"Noch niemand":"…";T.appendChild(p);return}
+    ps.forEach(x=>{const p=document.createElement("span");p.className="person";p.title=x.name+" "+fmt(x.s)+"–"+fmt(x.e);
+      const av=document.createElement("span");av.className="av";av.textContent=x.name.charAt(0).toUpperCase();
+      const nm=document.createElement("span");nm.textContent=x.name.split(/\s+/)[0];
+      const tm=document.createElement("span");tm.className="tm";tm.textContent=fmt(x.s)+"–"+fmt(x.e);
+      p.append(av,nm,tm);T.appendChild(p)});
+  }
 
   // ---------- week ----------
   function renderWeek(){
@@ -467,33 +569,50 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
     $("prevWeek").disabled=wk===0;$("nextWeek").disabled=wk>=WEEKS-1;
     const W=$("week");W.textContent="";
     week.forEach((d,i)=>{
-      const b=document.createElement("button");b.className="day"+(d===today?" today":"")+(isWeekend(d)?" we":"");
+      const b=document.createElement("button");b.type="button";b.className="day"+(d===today?" today":"")+(isWeekend(d)?" we":"");
       const mon=isoDow(d)===1,past=d<today,we=isWeekend(d);
-      const n=weekList.filter(x=>x.day===d).length;
+      const n=forDay(d).length;
       b.innerHTML='<span class="wd"></span><span class="dn"></span><span class="ds"></span>';
       b.querySelector(".wd").textContent=WD[i];
       b.querySelector(".dn").textContent=toDate(d).getUTCDate();
-      b.querySelector(".ds").textContent=mon?"Bern":past?"vorbei":we?(n?n+" Kaffee":"Kaffee"):n?n+" gebucht":"frei";
+      const long=mon?"Bern":past?"vorbei":we?(n?n+" Kaffee":"Kaffee"):n?n+" gebucht":"frei";
+      const short=mon?"Bern":past?"–":n?n+"×":we?"Kaffee":"frei";
+      const ds=b.querySelector(".ds");ds.innerHTML='<span class="l"></span><span class="s"></span>';
+      ds.firstChild.textContent=long;ds.lastChild.textContent=short;
       b.disabled=!bookable(d);
       b.title=mon?"Ausgebucht, Julian ist in Bern":"";
       b.setAttribute("aria-pressed",d===day);
       b.setAttribute("aria-label",WD[i]+" "+dm(d)+(mon?", ausgebucht, Julian in Bern":past?", vorbei":we?", nur Kaffee-Spots":""));
-      b.onclick=()=>{day=d;sel=null;list=forDayFromWeek();renderAll()};
+      b.onclick=()=>{day=d;sel=null;setStatus("");renderAll()};
       W.appendChild(b)});
   }
+  function goWeek(n,dir){
+    if(n<0||n>=WEEKS)return;
+    setWeek(n);day=week.find(bookable)||null;sel=null;setStatus("");renderAll();
+    const W=$("week");W.classList.remove("slide-l","slide-r");void W.offsetWidth;W.classList.add(dir>0?"slide-l":"slide-r");
+  }
+  $("prevWeek").onclick=()=>goWeek(wk-1,-1);
+  $("nextWeek").onclick=()=>goWeek(wk+1,1);
+  // Wischen auf der Wochenleiste
+  (function(){let x0=null,y0=null;const W=$("week");
+    W.addEventListener("touchstart",e=>{const t=e.touches[0];x0=t.clientX;y0=t.clientY},{passive:true});
+    W.addEventListener("touchend",e=>{if(x0===null)return;const t=e.changedTouches[0],dx=t.clientX-x0,dy=t.clientY-y0;x0=null;
+      if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.5)goWeek(wk+(dx<0?1:-1),dx<0?1:-1)},{passive:true});
+  })();
 
   // ---------- plan ----------
   const ns="http://www.w3.org/2000/svg";
   function svg(tag,attrs,parent){const e=document.createElementNS(ns,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e}
   function drawSofa(el,s){
     const {x,y,w,h}=s,arm=20,back=18;
-    svg("rect",{class:"frame",x,y,width:w,height:h,rx:12},el);                 // Gestell
-    svg("rect",{class:"frame",x:x+arm-2,y,width:w-2*arm+4,height:back,rx:7},el); // Rückenlehne (zur Wand)
-    svg("rect",{class:"frame",x,y,width:arm,height:h,rx:10},el);              // Armlehne links
-    svg("rect",{class:"frame",x:x+w-arm,y,width:arm,height:h,rx:10},el);      // Armlehne rechts
-    const cw=(w-2*arm-12)/2, cy=y+back+4, ch=h-back-10;
-    svg("rect",{class:"shape",x:x+arm+4,y:cy,width:cw,height:ch,rx:7},el);    // Kissen 1
-    svg("rect",{class:"shape",x:x+arm+8+cw,y:cy,width:cw,height:ch,rx:7},el); // Kissen 2
+    svg("rect",{class:"hit",x:x-6,y:y-6,width:w+12,height:h+12},el);
+    svg("rect",{class:"frame",x,y,width:w,height:h,rx:12},el);
+    svg("rect",{class:"frame",x:x+arm-2,y,width:w-2*arm+4,height:back,rx:7},el);
+    svg("rect",{class:"frame",x,y,width:arm,height:h,rx:10},el);
+    svg("rect",{class:"frame",x:x+w-arm,y,width:arm,height:h,rx:10},el);
+    const cw=(w-2*arm-12)/2,cy=y+back+4,ch=h-back-10;
+    svg("rect",{class:"shape",x:x+arm+4,y:cy,width:cw,height:ch,rx:7},el);
+    svg("rect",{class:"shape",x:x+arm+8+cw,y:cy,width:cw,height:ch,rx:7},el);
     svg("text",{class:"lab",x:x+w/2,y:cy+ch/2+5,"text-anchor":"middle"},el).textContent="Sofa";
   }
   // Tasse (Wochenende) oder Laptop (Werktag) am gewählten Platz
@@ -502,10 +621,9 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
   function drawProp(we){
     const key=(sel&&PROP_POS[sel])?(we?"cup":"lap")+sel:"";
     if(key===propKey)return;propKey=key;
-    const g=$("cups");g.textContent="";if(!key)return;
+    const g=$("props");g.textContent="";if(!key)return;
     const [x,y]=PROP_POS[sel];
-    const t=svg("g",{transform:"translate("+x+" "+y+") scale(1.35)"},g);
-    const c=svg("g",{class:"prop"},t);
+    const c=svg("g",{class:"prop"},svg("g",{transform:"translate("+x+" "+y+") scale(1.35)"},g));
     if(we){
       svg("line",{class:"saucer",x1:-11,y1:11,x2:11,y2:11},c);
       svg("path",{class:"cup",d:"M-8 -2 H8 L6.5 9 H-6.5 Z"},c);
@@ -517,15 +635,15 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
       svg("rect",{class:"lap-display",x:-9,y:-7,width:18,height:11,rx:.8},c);
       svg("line",{class:"lap-line",x1:-6.5,y1:-4,x2:2,y2:-4},c);
       svg("line",{class:"lap-line",x1:-6.5,y1:-.8,x2:-1,y2:-.8},c);
-      svg("rect",{class:"lap-cursor",x:0.5,y:-2.2,width:1.6,height:3},c);
+      svg("rect",{class:"lap-cursor",x:.5,y:-2.2,width:1.6,height:3},c);
       svg("path",{class:"lap-body",d:"M-14 6.5 H14 L12 10 H-12 Z"},c);
     }
   }
   function renderPlan(){
     const we=isWeekend(day);
     $("tblLabel").textContent=we?"Kaffee":"Tisch";
+    $("planSub").textContent=!day?"":we?"Kaffee-Spot antippen":"Platz oder Sofa antippen";
     drawProp(we);
-    $("planSub").textContent=we?"Kaffee-Spot antippen":"Platz oder Sofa antippen";
     const g=$("spots");g.textContent="";
     SPOTS.forEach(s=>{
       const bs=forSpot(s.id);const my=bs.some(isMine);
@@ -534,8 +652,10 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
       const el=svg("g",{class:"spot "+state+(s.id==="sofa"?" sofa":"")+(sel===s.id?" sel":""),tabindex:locked?"-1":"0",role:"button"});
       const stTxt={free:"frei",part:"teilweise gebucht",full:"ganzer Tag gebucht",mine:"deine Buchung",locked:s.id==="sofa"&&we?"nur Dienstag bis Freitag":"kein Tag gewählt"}[state];
       el.setAttribute("aria-label",lbl(s.id)+", "+stTxt);
+      svg("title",{},el).textContent=lbl(s.id)+(bs.length?"\n"+bs.map(b=>fmt(b.start_min)+"–"+fmt(b.end_min)+" "+b.name).join("\n"):locked?"":"\nfrei");
       if(s.id==="sofa")drawSofa(el,s);
-      else{svg("circle",{class:"shape",cx:s.x,cy:s.y,r:s.r},el);
+      else{svg("circle",{class:"hit",cx:s.x,cy:s.y,r:40},el);
+        svg("circle",{class:"shape",cx:s.x,cy:s.y,r:s.r},el);
         svg("text",{class:"lab",x:s.x,y:s.y+6,"text-anchor":"middle"},el).textContent=s.id}
       if(!locked){
         el.addEventListener("click",()=>pick(s.id));
@@ -545,21 +665,45 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
   }
 
   async function pick(k){
+    if(!day)return;
     const name=$("name").value.trim();
     if(k==="sofa"&&isWeekend(day))return;
     if(k==="sofa"&&name&&!isSandro(name)){await sofaPopup();return}
-    sel=k;$("status").textContent="";renderAll();
-    if(!name)$("name").focus();
+    const first=sel!==k;sel=k;setStatus("");renderAll();
+    if(first&&narrow())$("panel").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion:reduce)").matches?"auto":"smooth",block:"start"});
+    else if(!name&&!narrow())$("name").focus();
   }
 
   // ---------- panel ----------
+  function presets(){
+    if(!sel)return[];
+    if(sel==="sofa")return[{l:"30 Min.",d:30},{l:"1 Std.",d:60}];
+    if(isWeekend(day))return[{l:"30 Min.",d:30},{l:"1 Std.",d:60},{l:"2 Std.",d:120},{l:"11–15 Uhr",s:660,e:900}];
+    return[{l:"1 Std.",d:60},{l:"2 Std.",d:120},{l:"Vormittag",s:510,e:720},{l:"Nachmittag",s:780,e:960},{l:"Ganzer Tag",s:510,e:960}];
+  }
+  function presetRange(p){
+    const bs=forSpot(sel),ear=earliest();
+    if(p.d){let s=+$("from").value;if(isNaN(s)||!$("from").options.length)return null;
+      const e=s+p.d;return e<=CLOSE&&free(s,e,bs)?[s,e]:null}
+    const s=Math.max(p.s,ear);return free(s,p.e,bs)?[s,p.e]:null;
+  }
+  function renderQuick(){
+    const Q=$("quick");Q.textContent="";
+    const ps=presets();
+    $("quick").parentElement.hidden=!ps.length;
+    const f=+$("from").value,t=+$("to").value;
+    ps.forEach(p=>{const r=presetRange(p);const b=document.createElement("button");b.type="button";b.className="qbtn";b.textContent=p.l;
+      b.disabled=!r;b.setAttribute("aria-pressed",!!r&&r[0]===f&&r[1]===t);
+      b.onclick=()=>{const r2=presetRange(p);if(!r2)return;$("from").value=r2[0];fillTo(r2[1]);renderQuick()};
+      Q.appendChild(b)});
+  }
   function renderPanel(){
     $("panel").setAttribute("aria-disabled",String(!sel));
     $("panelTitle").textContent=sel?lbl(sel)+(day?", "+WD[isoDow(day)-1]+" "+dm(day):""):"Noch kein Platz gewählt";
     const span=fmt(OPEN)+"–"+fmt(CLOSE);
-    $("panelRule").textContent=sel==="sofa"?"Nap, höchstens 1 Stunde":!sel?"Wähl einen Platz im Plan.":isWeekend(day)?"Kaffee-Spot, "+span:"Arbeitsplatz, "+span;
+    $("panelRule").textContent=!day?"Diese Woche ist nichts mehr buchbar.":sel==="sofa"?"Nap, höchstens 1 Stunde":!sel?"Wähl einen Platz im Plan.":isWeekend(day)?"Kaffee-Spot, "+span:"Arbeitsplatz, "+span;
     $("sofaNote").hidden=sel!=="sofa";
-    $("weNote").hidden=!isWeekend(day);
+    $("weNote").hidden=!(sel&&isWeekend(day));
     const S=$("slots");S.textContent="";
     const bs=sel?forSpot(sel):[];
     const chip=(t,c)=>{const e=document.createElement("span");e.className="chip"+(c?" "+c:"");e.textContent=t;S.appendChild(e)};
@@ -568,7 +712,6 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
     else bs.forEach(b=>chip(fmt(b.start_min)+"–"+fmt(b.end_min)+" "+b.name,isMine(b)?"mine":""));
     fillFrom();
   }
-  const busyAt=(m,bs)=>bs.some(b=>m>=b.start_min&&m<b.end_min);
   function fillFrom(){
     const f=$("from"),prev=+f.value||0;f.textContent="";
     const bs=sel?forSpot(sel):[];
@@ -577,19 +720,21 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
     f.disabled=!f.options.length;
     fillTo();
   }
-  function fillTo(){
-    const t=$("to"),prev=+t.value||0;t.textContent="";
+  function fillTo(want){
+    const t=$("to"),prev=want||+t.value||0;t.textContent="";
     const from=+$("from").value;
     if(!$("from").options.length){t.disabled=true;$("book").disabled=true;
-      $("book").textContent=sel?"An diesem Tag nichts mehr frei":"Buchen";return}
+      $("book").textContent=sel?"An diesem Tag nichts mehr frei":"Buchen";renderQuick();return}
     const bs=forSpot(sel);const next=bs.filter(b=>b.start_min>from).reduce((a,b)=>Math.min(a,b.start_min),CLOSE);
     const max=sel==="sofa"?MAX_SOFA:MAX_SEAT;
     for(let m=from+STEP;m<=Math.min(next,from+max);m+=STEP)t.add(new Option(fmt(m),m));
     if(prev&&[...t.options].some(o=>+o.value===prev))t.value=prev;
-    else t.value=t.options[Math.min(t.options.length-1,(sel==="sofa"||isWeekend(day))?1:7)].value;
+    else t.value=t.options[Math.min(t.options.length-1,(sel==="sofa"||isWeekend(day))?1:3)].value;
     t.disabled=false;$("book").disabled=false;$("book").textContent=lbl(sel)+" buchen";
+    renderQuick();
   }
-  $("from").onchange=fillTo;
+  $("from").onchange=()=>fillTo();
+  $("to").onchange=renderQuick;
 
   // ---------- overview ----------
   function renderOverview(){
@@ -602,14 +747,15 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
     for(let m=OPEN;m<=CLOSE;m+=we?60:150){const sp=document.createElement("span");sp.textContent=fmt(m);tk.appendChild(sp)}
     ax.appendChild(tk);G.appendChild(ax);
     SPOTS.filter(s=>!(we&&s.id==="sofa")).forEach(s=>{
-      const r=document.createElement("div");r.className="g-row";
+      const r=document.createElement("div");r.className="g-row"+(sel===s.id?" sel":"");
+      if(day){r.tabIndex=0;r.setAttribute("role","button");r.setAttribute("aria-label",lbl(s.id)+" wählen");
+        r.onclick=()=>pick(s.id);r.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();pick(s.id)}}}
       const l=document.createElement("div");l.className="g-lab";l.textContent=s.id==="sofa"?"Sofa":(we?"Spot ":"Platz ")+s.id;
       const tr=document.createElement("div");tr.className="g-track";
       forSpot(s.id).forEach(b=>{const bar=document.createElement("div");bar.className="g-bar"+(isMine(b)?" mine":"");
         bar.style.left=((b.start_min-OPEN)/(CLOSE-OPEN)*100)+"%";bar.style.width=((b.end_min-b.start_min)/(CLOSE-OPEN)*100)+"%";
         bar.textContent=b.name;bar.title=b.name+" "+fmt(b.start_min)+"–"+fmt(b.end_min);tr.appendChild(bar)});
       r.append(l,tr);G.appendChild(r)});
-    // Admin-Liste mit Storno für alle Buchungen des Tages
     const L=$("dayList");L.hidden=!adminKey;L.textContent="";
     if(adminKey)[...list].sort((a,b)=>a.start_min-b.start_min).forEach(b=>L.appendChild(itemRow(b,false)));
   }
@@ -618,43 +764,73 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
     const a=document.createElement("span");const tm=document.createElement("span");tm.className="mono";
     tm.textContent=(withDay?WD[isoDow(b.day)-1]+" "+dm(b.day)+" ":"")+fmt(b.start_min)+"–"+fmt(b.end_min);
     a.append(tm,document.createTextNode(" · "+lbl(b.seat,b.day)+(withDay?"":" · "+b.name)));r.appendChild(a);
-    if(isMine(b)||adminKey){const x=document.createElement("button");x.className="btn ghost small";x.textContent="Stornieren";x.onclick=()=>cancel(b);r.appendChild(x)}
+    if(isMine(b)||adminKey){const x=document.createElement("button");x.type="button";x.className="btn ghost small";x.textContent="Stornieren";x.onclick=()=>cancel(b);r.appendChild(x)}
     return r;
   }
   function renderMine(){
-    const my=weekList.filter(isMine).sort((a,b)=>a.day.localeCompare(b.day)||a.start_min-b.start_min);
+    const my=allList.filter(b=>isMine(b)&&b.day>=today).sort((a,b)=>a.day.localeCompare(b.day)||a.start_min-b.start_min);
     $("mineSection").hidden=!my.length;
     const L=$("mineList");L.textContent="";my.forEach(b=>L.appendChild(itemRow(b,true)));
   }
 
   function setDayHours(){const h=(day&&HOURS[isoDow(day)])||[510,960];OPEN=h[0];CLOSE=h[1]}
-  function renderAll(){setDayHours();renderWeek();renderPlan();renderPanel();renderOverview();renderMine()}
+  function renderAll(){list=day?forDay(day):[];setDayHours();renderToday();renderWeek();renderPlan();renderPanel();renderOverview();renderMine()}
 
   // ---------- load ----------
+  let loading=null;
   async function load(){
-    try{
-      weekList=await api("bookings?select=id,day,seat,name,start_min,end_min&day=gte."+monday0+"&day=lte."+lastDay+"&order=start_min");
-      list=forDayFromWeek();loaded=true;renderAll();
-    }catch(e){loaded=true;$("status").textContent="Buchungen konnten nicht geladen werden.";renderAll()}
+    if(loading)return loading;
+    loading=(async()=>{
+      try{
+        allList=await api("bookings?select=id,day,seat,name,start_min,end_min&day=gte."+monday0+"&day=lte."+lastDay+"&order=start_min");
+        loaded=true;if(!$("dlg").open)renderAll();
+      }catch(e){loaded=true;setStatus("Buchungen konnten nicht geladen werden.","err");renderAll()}
+      finally{loading=null}
+    })();
+    return loading;
   }
+  let reloadT=null;const scheduleLoad=()=>{clearTimeout(reloadT);reloadT=setTimeout(load,350)};
+
+  // ---------- live ----------
+  let live=false;
+  function paintLive(){$("live").classList.toggle("on",live);$("liveTxt").textContent=live?"Live":"Aktualisiert alle 20 s"}
+  function startLive(){
+    try{
+      if(!window.supabase||!window.supabase.createClient){paintLive();return}
+      const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
+      sb.channel("s52-bookings")
+        .on("postgres_changes",{event:"INSERT",schema:"public",table:"booking_events"},()=>scheduleLoad())
+        .subscribe(st=>{const was=live;live=st==="SUBSCRIBED";paintLive();if(live&&!was)scheduleLoad()});
+    }catch(e){live=false;paintLive()}
+  }
+  (function(){const s=document.createElement("script");s.src=SUPABASE_JS;s.async=true;s.onload=startLive;s.onerror=paintLive;document.head.appendChild(s)})();
+  setTimeout(()=>{if(!live)paintLive()},4000);
+  setInterval(()=>{if(!document.hidden&&!$("dlg").open&&!live)load()},20000);
+  setInterval(()=>{if(!document.hidden&&!$("dlg").open&&live)load()},60000);
+  document.addEventListener("visibilitychange",()=>{if(!document.hidden)load()});
 
   // ---------- book / cancel ----------
   $("book").onclick=async()=>{
     const name=$("name").value.trim();const k=sel;
     const start=+$("from").value,end=+$("to").value;
-    if(!name){$("status").textContent="Bitte zuerst deinen Namen eintragen.";$("name").focus();return}
+    if(!name){setStatus("Bitte zuerst deinen Namen eintragen.","err");$("name").focus();return}
     if(k==="sofa"&&!isSandro(name)){await sofaPopup();return}
     if(isTim(name)&&!(await timPopup()))return;
     try{localStorage.setItem("s52name",name)}catch(e){}
-    $("book").disabled=true;$("status").textContent="Wird gebucht…";
+    $("book").disabled=true;setStatus("Wird gebucht …");
     try{
       const res=await rpc("book",{p_day:day,p_seat:k,p_name:name,p_start:start,p_end:end});
       const row=Array.isArray(res)?res[0]:res;
       mine[row.id]=row.cancel_token;setStore("s52tokens",mine);
       await load();
-      $("status").textContent="Gebucht: "+lbl(k)+", "+fmt(start)+"–"+fmt(end)+".";
-    }catch(e){$("status").textContent=errText(e);await load()}
+      setStatus("Gebucht: "+lbl(k)+", "+WD[isoDow(day)-1]+" "+dm(day)+", "+fmt(start)+"–"+fmt(end)+".","ok");
+    }catch(e){setStatus(errText(e),"err");await load()}
   };
+  $("name").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("name").blur()}});
+  $("name").addEventListener("change",()=>{
+    const n=$("name").value.trim();
+    if(sel==="sofa"&&n&&!isSandro(n)){sofaPopup().then(()=>{sel=null;renderAll()})}
+  });
 
   async function cancel(b){
     const ok=await ask("Buchung stornieren?",lbl(b.seat,b.day)+", "+WD[isoDow(b.day)-1]+" "+dm(b.day)+", "+fmt(b.start_min)+"–"+fmt(b.end_min)+" ("+b.name+")",
@@ -662,10 +838,10 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
     if(!ok)return;
     try{
       const done=await rpc("cancel_booking",{p_id:b.id,p_token:mine[b.id]||adminKey});
-      if(!done){$("status").textContent="Diese Buchung kannst du nicht stornieren.";return}
+      if(!done){setStatus("Diese Buchung kannst du nicht stornieren.","err");return}
       delete mine[b.id];setStore("s52tokens",mine);
-      await load();$("status").textContent="Storniert.";
-    }catch(e){$("status").textContent="Stornieren hat nicht geklappt."}
+      await load();setStatus("Storniert.","ok");
+    }catch(e){setStatus("Stornieren hat nicht geklappt.","err")}
   }
 
   // ---------- admin ----------
@@ -676,35 +852,34 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
     if(q)history.replaceState(null,"",location.pathname);
   })();
 
-  $("name").addEventListener("change",()=>{
-    const n=$("name").value.trim();
-    if(sel==="sofa"&&n&&!isSandro(n)){sofaPopup().then(()=>{sel=null;renderAll()})}
-  });
-
   // ---------- coffee ----------
   function machine(){
     const n=zNow(),dw=isoDow(n.ymd),t=n.min,ws=MACHINE[dw]||[];
     const cur=ws.find(w=>t>=w[0]&&t<w[1]),on=!!cur;
     const c=$("coffee");c.classList.toggle("on",on);c.classList.toggle("off",!on);
+    const pill=$("coffeePill");pill.classList.toggle("on",on);pill.classList.toggle("off",!on);
     $("coffeeState").textContent=on?"Maschine ist an":"Maschine ist aus";
-    let next;
-    if(on)next="Kaffee bis "+fmt(cur[1]);
+    let next,short;
+    if(on){next="Kaffee bis "+fmt(cur[1]);short="Kaffee bis "+fmt(cur[1])}
     else{
       const later=ws.find(w=>w[0]>t);
-      if(later)next=(ws.some(w=>w[1]<=t)?"Mittagspause, wieder an ab ":"Wieder an ab ")+fmt(later[0]);
+      if(later){const lunch=ws.some(w=>w[1]<=t);next=(lunch?"Mittagspause, wieder an ab ":"Wieder an ab ")+fmt(later[0]);short=(lunch?"Mittagspause bis ":"Kaffee ab ")+fmt(later[0])}
       else{for(let i=1;i<=7;i++){const d=addDays(n.ymd,i),w=MACHINE[isoDow(d)];
-        if(w){next=(dw===1&&!ws.length?"Heute aus, Julian ist in Bern. ":"")+"Wieder an "+(i===1?"morgen":WD[isoDow(d)-1])+" ab "+fmt(w[0][0]);break}}}
+        if(w){const when=(i===1?"morgen":WD[isoDow(d)-1])+" ab "+fmt(w[0][0]);
+          next=(dw===1&&!ws.length?"Heute aus, Julian ist in Bern. ":"")+"Wieder an "+when;short="Kaffee "+when;break}}}
     }
-    $("coffeeNext").textContent=next;
+    $("coffeeNext").textContent=next;$("coffeePillTxt").textContent=short;
     const W=$("windows");W.textContent="";
     if(!ws.length){const e=document.createElement("span");e.className="win";e.textContent="Heute keine";W.appendChild(e)}
     ws.forEach(w=>{const e=document.createElement("span");e.className="win"+(cur===w?" cur":"");e.textContent=fmt(w[0])+"–"+fmt(w[1]);W.appendChild(e)});
   }
   machine();setInterval(machine,30000);
 
-  function goWeek(n){setWeek(n);day=week.find(bookable)||null;sel=null;list=forDayFromWeek();$("status").textContent="";renderAll()}
-  $("prevWeek").onclick=()=>{if(wk>0)goWeek(wk-1)};
-  $("nextWeek").onclick=()=>{if(wk<WEEKS-1)goWeek(wk+1)};
+  // ---------- Hausregeln: am Desktop immer offen ----------
+  const wide=matchMedia("(min-width:1080px)");
+  function syncRules(){const r=$("rules");if(wide.matches)r.open=true}
+  syncRules();if(wide.addEventListener)wide.addEventListener("change",syncRules);
+  $("rules").querySelector("summary").addEventListener("click",e=>{if(wide.matches)e.preventDefault()});
 
   // ---------- hell / dunkel ----------
   const MOON='<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>';
@@ -719,8 +894,6 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
   paintTheme();
 
   renderAll();load();
-  setInterval(()=>{if(!document.hidden&&!$("dlg").open)load()},30000);
-  document.addEventListener("visibilitychange",()=>{if(!document.hidden)load()});
 })();
 </script>
 </body>
