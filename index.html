@@ -178,6 +178,16 @@ button{font:inherit;color:inherit}
 .spot.mine .lab{fill:var(--bg)}
 @media (hover:hover){.spot:not(.locked):hover .shape{stroke:var(--accent);stroke-width:2.5}.sofa:not(.locked):hover .frame{stroke:var(--accent)}}
 .spot.sel .shape{stroke:var(--accent);stroke-width:3.5}
+.spot .ring{fill:none;stroke:var(--accent);stroke-width:3;opacity:0;pointer-events:none;transform-box:fill-box;transform-origin:center}
+.spot.just .ring{animation:ring 1.1s ease-out 2}
+.spot.just .shape{animation:flash 1.4s ease-out}
+.spot.just .lab{animation:labpop 1.4s ease-out}
+.status.ok::before{content:"";display:inline-block;width:16px;height:16px;margin-right:6px;vertical-align:-3px;border-radius:50%;
+  background:var(--ok) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.3 7 10.8l4.6-5' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/16px no-repeat}
+@keyframes ring{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(1.9)}}
+@keyframes flash{0%{fill:var(--accent);stroke:var(--accent)}40%{fill:var(--accent)}100%{}}
+@keyframes labpop{0%{fill:var(--bg)}40%{fill:var(--bg)}100%{}}
+@keyframes fresh{0%{box-shadow:0 0 0 0 var(--accent)}30%{box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 35%,transparent)}100%{box-shadow:0 0 0 0 transparent}}
 .spot.locked{cursor:not-allowed}
 .spot.locked .shape{fill:var(--soft);stroke:var(--line);stroke-dasharray:4 3}
 .spot.locked .lab{fill:var(--faint)}
@@ -197,7 +207,7 @@ button{font:inherit;color:inherit}
 .props .cup-h{fill:none;stroke:var(--fg);stroke-width:1.3}
 .props .saucer{stroke:var(--fg);stroke-width:1.3;stroke-linecap:round}
 .props .crema{fill:var(--crema)}
-.props .wisp{fill:none;stroke:var(--muted);stroke-width:1.4;stroke-linecap:round;opacity:.55}
+.props .wisp{fill:none;stroke:var(--muted);stroke-width:1.5;stroke-linecap:round}
 .props .code{stroke-width:1.3;stroke-linecap:round}
 .props .c1{stroke:var(--accent)} .props .c2{stroke:var(--ok)} .props .c3{stroke:var(--warn)} .props .c4{stroke:var(--faint)}
 .props .lap-body{fill:var(--steel);stroke:var(--fg);stroke-width:1.2}
@@ -254,6 +264,10 @@ select{font-family:var(--mono)}
   background-image:repeating-linear-gradient(90deg,transparent 0,transparent calc(100%/var(--seg,9) - 1px),var(--line) calc(100%/var(--seg,9) - 1px),var(--line) calc(100%/var(--seg,9)))}
 .g-bar{position:absolute;top:0;bottom:0;background:var(--taken);border-radius:4px;font:400 10px/18px var(--sans);padding:0 5px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .g-bar.mine{background:var(--accent);color:var(--bg)}
+.g-bar.fresh{animation:fresh 1.6s ease-out}
+.now-line{position:absolute;top:-3px;bottom:-3px;width:2px;margin-left:-1px;background:var(--off);border-radius:1px;pointer-events:none;z-index:1}
+.now-dot{position:absolute;top:-6px;width:8px;height:8px;margin-left:-4px;border-radius:50%;background:var(--off);pointer-events:none;z-index:1}
+.now-txt{color:var(--off);font:500 .75rem var(--mono);margin-left:6px}
 .g-axis{display:grid;grid-template-columns:4.25rem 1fr;gap:8px;font:400 .6875rem var(--mono);color:var(--muted);margin-bottom:2px}
 .g-axis div:last-child{display:flex;justify-content:space-between}
 
@@ -273,12 +287,11 @@ dialog p{color:var(--muted)}
 }
 
 /* motion */
+@media (prefers-reduced-motion:reduce){.spot.just .ring,.spot.just .shape,.spot.just .lab,.g-bar.fresh{animation:none}}
 @media (prefers-reduced-motion:no-preference){
   .spot .shape{transition:fill .15s,stroke .15s}
   .props .prop{animation:pop .28s cubic-bezier(.3,1.4,.6,1)}
   .props .lap-cursor{animation:blink 1s steps(1) infinite}
-  .props .wisp{animation:wisp 2.8s ease-in-out infinite;opacity:0}
-  .props .scroll{animation:codescroll 5s linear infinite}
   .coffee.on .steam path{animation:steam 2.4s ease-in-out infinite}
   .coffee.on .steam path:nth-child(2){animation-delay:.6s}
   .week.slide-l{animation:slideL .22s ease-out} .week.slide-r{animation:slideR .22s ease-out}
@@ -329,9 +342,9 @@ dialog p{color:var(--muted)}
     <div>
       <div class="step-head"><span class="step-no">2</span><h3>Platz</h3><span class="step-sub" id="planSub">Platz oder Sofa antippen</span></div>
       <div class="plan">
-        <svg viewBox="36 -14 504 344" role="group" aria-label="Raumplan mit Tisch, sechs Plätzen und Sofa">
-          <rect class="tbl" x="120" y="62" width="280" height="100" rx="4"/>
-          <text class="tbl-label" x="260" y="117" text-anchor="middle" id="tblLabel">Tisch</text>
+        <svg viewBox="30 -12 516 384" role="group" aria-label="Raumplan mit Tisch, sechs Plätzen und Sofa">
+          <rect class="tbl" x="110" y="60" width="300" height="140" rx="5"/>
+          <text class="tbl-label" x="260" y="135" text-anchor="middle" id="tblLabel">Tisch</text>
           <g id="props" class="props" aria-hidden="true"></g>
           <g id="spots"></g>
         </svg>
@@ -374,6 +387,14 @@ dialog p{color:var(--muted)}
             <select id="to" aria-label="Bis"></select>
           </div>
         </div>
+        <div class="field" id="beansField">
+          <span class="lbl" id="beansLbl">Bohnen für deinen Kaffee</span>
+          <div class="quick" id="beans" role="radiogroup" aria-labelledby="beansLbl">
+            <button type="button" class="qbtn" role="radio" data-b="indien">Indien</button>
+            <button type="button" class="qbtn" role="radio" data-b="honduras">Honduras</button>
+            <button type="button" class="qbtn" role="radio" data-b="">Egal</button>
+          </div>
+        </div>
         <p class="note" id="sofaNote" hidden>Das Sofa ist für Sandro reserviert, für einen Nap von höchstens 1 Stunde.</p>
         <p class="note" id="weNote" hidden>Am Wochenende gibt es nur Kaffee-Spots, von 11:00 bis 15:00.</p>
         <button class="btn wide" id="book" type="button" disabled>Buchen</button>
@@ -389,7 +410,7 @@ dialog p{color:var(--muted)}
 
   <!-- ===== Übersicht ===== -->
   <section class="area-over" aria-labelledby="h-over">
-    <div class="over-head"><h3 id="h-over" style="font-weight:500" class="muted">Übersicht <span id="dayName"></span></h3>
+    <div class="over-head"><h3 id="h-over" style="font-weight:500" class="muted">Übersicht <span id="dayName"></span><span class="now-txt" id="nowTxt"></span></h3>
       <span class="live" id="live"><i></i><span id="liveTxt">Verbinde …</span></span></div>
     <div class="grid"><div class="grid-inner" id="grid"></div></div>
     <div class="list" id="dayList" hidden style="margin-top:12px"></div>
@@ -456,11 +477,11 @@ const SUPABASE_JS  = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3
 
 (function(){
   const SPOTS=[
-    {id:"1",x:200,y:24,r:27},{id:"2",x:320,y:24,r:27},
-    {id:"3",x:446,y:112,r:27},
-    {id:"4",x:320,y:200,r:27},{id:"5",x:200,y:200,r:27},
-    {id:"6",x:74,y:112,r:27},
-    {id:"sofa",x:330,y:246,w:200,h:76}];
+    {id:"1",x:200,y:22,r:27},{id:"2",x:320,y:22,r:27},
+    {id:"3",x:448,y:130,r:27},
+    {id:"4",x:320,y:238,r:27},{id:"5",x:200,y:238,r:27},
+    {id:"6",x:72,y:130,r:27},
+    {id:"sofa",x:336,y:284,w:200,h:76}];
   const STEP=30,MAX_SEAT=480,MAX_SOFA=60,WEEKS=4;
   // Buchbare Zeiten pro Wochentag (1=Mo … 7=So), Minuten ab Mitternacht
   const HOURS={2:[510,960],3:[510,960],4:[510,960],5:[510,960],6:[660,900],7:[660,900]};
@@ -503,6 +524,11 @@ const SUPABASE_JS  = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3
   let mine=getStore("s52tokens",{});
   const isMine=b=>!!mine[b.id];
   try{const n=localStorage.getItem("s52name");if(n)$("name").value=n}catch(e){}
+  let beans=getStore("s52beans","");if(!["","indien","honduras"].includes(beans))beans="";
+  let justBooked=null,justId=null;
+  function paintBeans(){$("beansField").hidden=!sel||sel==="sofa"||!isWeekend(day);
+    document.querySelectorAll("#beans .qbtn").forEach(b=>{const on=b.dataset.b===beans;b.setAttribute("aria-pressed",on);b.setAttribute("aria-checked",on)})}
+  document.querySelectorAll("#beans .qbtn").forEach(b=>b.onclick=()=>{beans=b.dataset.b;setStore("s52beans",beans);paintBeans()});
 
   // ---------- api ----------
   const H={"apikey":SUPABASE_KEY,"Content-Type":"application/json"};
@@ -618,34 +644,58 @@ const SUPABASE_JS  = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3
     svg("rect",{class:"shape",x:x+arm+4,y:cy,width:cw,height:ch,rx:7},el);
     svg("rect",{class:"shape",x:x+arm+8+cw,y:cy,width:cw,height:ch,rx:7},el);
     svg("text",{class:"lab",x:x+w/2,y:cy+ch/2+5,"text-anchor":"middle"},el).textContent="Sofa";
+    if(justBooked==="sofa")svg("rect",{class:"ring",x,y,width:w,height:h,rx:12},el);
   }
   // Tasse (Wochenende) oder Laptop (Werktag) am gewählten Platz
-  const PROP_POS={"1":[200,96],"2":[320,96],"3":[370,118],"4":[320,144],"5":[200,144],"6":[150,118]};
+  // Position vor dem jeweiligen Stuhl: [Tasse], [Laptop]
+  // Gleicher Abstand (30) zur Tischkante: Tisch x 110–410, y 60–200
+  const PROP_POS={"1":[[200,93],[200,104]],"2":[[320,93],[320,104]],"3":[[362,124],[358,129]],
+                  "4":[[320,154],[320,154]],"5":[[200,154],[200,154]],"6":[[156,124],[162,129]]};
   let propKey=null;
   function drawProp(we){
     const key=(sel&&PROP_POS[sel])?(we?"cup":"lap")+sel:"";
     if(key===propKey)return;propKey=key;
     const g=$("props");g.textContent="";if(!key)return;
-    const [x,y]=PROP_POS[sel];
+    const [x,y]=PROP_POS[sel][we?0:1];
     const c=svg("g",{class:"prop"},svg("g",{transform:"translate("+x+" "+y+") scale(1.35)"},g));
+    const anim=(el,attrs)=>svg("animate",Object.assign({repeatCount:"indefinite"},attrs),el);
+    const animT=(el,attrs)=>svg("animateTransform",Object.assign({attributeName:"transform",repeatCount:"indefinite"},attrs),el);
     if(we){
-      // Dampf: drei Fahnen, versetzt
-      [-4,0,4].forEach((dx,j)=>{const w=svg("path",{class:"wisp",d:"M"+dx+" -4 q-2.4 -3.5 0 -7 q2.4 -3.5 0 -7"},c);
-        w.style.animationDelay=(j*0.8)+"s";w.style.transformBox="fill-box";w.style.transformOrigin="50% 100%"});
+      c.parentNode.setAttribute("transform","translate("+x+" "+y+") scale(1.45)");
+      // Dampf: drei Fahnen, die sich schlängeln, aufsteigen und verblassen
+      const A="M0 0 q-2.6 -3 0 -6 q2.6 -3 0 -6",B="M0 0 q2.6 -3 0 -6 q-2.6 -3 0 -6";
+      [-4,0,4].forEach((dx,j)=>{
+        const g0=svg("g",{transform:"translate("+dx+" -4)"},c);
+        const g1=svg("g",{},g0);
+        const w=svg("path",{class:"wisp",d:A,opacity:"0"},g1);
+        const off=(-j*0.8)+"s";
+        anim(w,{attributeName:"d",values:A+";"+B+";"+A,dur:"1.4s",begin:off});
+        anim(w,{attributeName:"opacity",values:"0;.9;.6;0",keyTimes:"0;.25;.7;1",dur:"2.4s",begin:off});
+        animT(g1,{type:"translate",values:"0 2;0 -2;0 -5",keyTimes:"0;.5;1",dur:"2.4s",begin:off});
+      });
       svg("line",{class:"saucer",x1:-11,y1:11,x2:11,y2:11},c);
       svg("path",{class:"cup",d:"M-8 -2 H8 L6.5 9 H-6.5 Z"},c);
       svg("path",{class:"cup-h",d:"M7.6 0.5 q5 0 5 3.6 q0 3.6 -6 3.6"},c);
       svg("rect",{class:"crema",x:-7.2,y:-1.2,width:14.4,height:2.2,rx:1},c);
     }else{
+      c.parentNode.setAttribute("transform","translate("+x+" "+y+") scale(1.6)");
       svg("rect",{class:"lap-body",x:-11,y:-9,width:22,height:15,rx:2},c);
       svg("rect",{class:"lap-display",x:-9,y:-7,width:18,height:11,rx:.8},c);
-      // laufender Code, auf den Bildschirm begrenzt
+      // Code: wird Zeile für Zeile getippt und scrollt nach oben
       const clip=svg("clipPath",{id:"lapClip"},c);svg("rect",{x:-9,y:-7,width:18,height:11,rx:.8},clip);
       const view=svg("g",{"clip-path":"url(#lapClip)"},c);
-      const sc=svg("g",{class:"scroll"},view);
+      const sc=svg("g",{},view);
       const LINES=[[0,9,1],[2,6,2],[2,10,4],[4,5,3],[2,8,1],[0,3,4],[0,7,2],[2,9,3]]; // [Einzug, Länge, Farbe]
-      for(let rep=0;rep<2;rep++)LINES.forEach((l,i)=>{const y=-5+(rep*LINES.length+i)*2.4,x=-7.5+l[0];
-        svg("line",{class:"code c"+l[2],x1:x,y1:y,x2:x+l[1],y2:y},sc)});
+      const GAP=2.4,N=LINES.length,DUR=N*0.55; // eine Zeile alle 0,55 s
+      for(let rep=0;rep<2;rep++)LINES.forEach((l,i)=>{
+        const y0=-5+(rep*N+i)*GAP,x1=-7.5+l[0],x2=x1+l[1];
+        const ln=svg("line",{class:"code c"+l[2],x1,y1:y0,x2,y2:y0},sc);
+        // jede Zeile "tippt" sich von links auf
+        anim(ln,{attributeName:"x2",values:x1+";"+x2+";"+x2,keyTimes:"0;.35;1",dur:DUR+"s",begin:(-(N-i)*0.55)+"s"});
+      });
+      animT(sc,{type:"translate",values:"0 0;0 "+(-N*GAP),dur:DUR+"s",calcMode:"linear"});
+      const cur=svg("rect",{class:"lap-cursor",x:4.5,y:1.6,width:1.4,height:2.2},c);
+      anim(cur,{attributeName:"opacity",values:"1;0",dur:"1s",calcMode:"discrete"});
       svg("path",{class:"lap-body",d:"M-14 6.5 H14 L12 10 H-12 Z"},c);
     }
   }
@@ -662,10 +712,12 @@ const SUPABASE_JS  = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3
       const el=svg("g",{class:"spot "+state+(s.id==="sofa"?" sofa":"")+(sel===s.id?" sel":""),tabindex:locked?"-1":"0",role:"button"});
       const stTxt={free:"frei",part:"teilweise gebucht",full:"ganzer Tag gebucht",mine:"deine Buchung",locked:s.id==="sofa"&&we?"nur Dienstag bis Freitag":"kein Tag gewählt"}[state];
       el.setAttribute("aria-label",lbl(s.id)+", "+stTxt);
+      if(justBooked===s.id)el.classList.add("just");
       svg("title",{},el).textContent=lbl(s.id)+(bs.length?"\n"+bs.map(b=>fmt(b.start_min)+"–"+fmt(b.end_min)+" "+b.name).join("\n"):locked?"":"\nfrei");
       if(s.id==="sofa")drawSofa(el,s);
       else{svg("circle",{class:"hit",cx:s.x,cy:s.y,r:40},el);
         svg("circle",{class:"shape",cx:s.x,cy:s.y,r:s.r},el);
+        if(justBooked===s.id)svg("circle",{class:"ring",cx:s.x,cy:s.y,r:s.r},el);
         svg("text",{class:"lab",x:s.x,y:s.y+6,"text-anchor":"middle"},el).textContent=s.id}
       if(!locked){
         el.addEventListener("click",()=>pick(s.id));
@@ -714,6 +766,7 @@ const SUPABASE_JS  = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3
     $("panelRule").textContent=!day?"Diese Woche ist nichts mehr buchbar.":sel==="sofa"?"Nap, höchstens 1 Stunde":!sel?"Wähl einen Platz im Plan.":isWeekend(day)?"Kaffee-Spot, "+span:"Arbeitsplatz, "+span;
     $("sofaNote").hidden=sel!=="sofa";
     $("weNote").hidden=!(sel&&isWeekend(day));
+    paintBeans();
     const S=$("slots");S.textContent="";
     const bs=sel?forSpot(sel):[];
     const chip=(t,c)=>{const e=document.createElement("span");e.className="chip"+(c?" "+c:"");e.textContent=t;S.appendChild(e)};
@@ -749,6 +802,8 @@ const SUPABASE_JS  = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3
   // ---------- overview ----------
   function renderOverview(){
     $("dayName").textContent=day?WD[isoDow(day)-1]+" "+dm(day):"";
+    const nm=zNow().min,nowIn=day===today&&nm>=OPEN&&nm<=CLOSE,nowPct=(nm-OPEN)/(CLOSE-OPEN)*100;let firstNow=false;
+    $("nowTxt").textContent=nowIn?"jetzt "+fmt(nm):"";
     const G=$("grid");G.textContent="";
     const we=isWeekend(day);
     G.style.setProperty("--seg",(CLOSE-OPEN)/STEP);
@@ -764,7 +819,10 @@ const SUPABASE_JS  = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3
       const tr=document.createElement("div");tr.className="g-track";
       forSpot(s.id).forEach(b=>{const bar=document.createElement("div");bar.className="g-bar"+(isMine(b)?" mine":"");
         bar.style.left=((b.start_min-OPEN)/(CLOSE-OPEN)*100)+"%";bar.style.width=((b.end_min-b.start_min)/(CLOSE-OPEN)*100)+"%";
+        if(b.id===justId)bar.classList.add("fresh");
         bar.textContent=b.name;bar.title=b.name+" "+fmt(b.start_min)+"–"+fmt(b.end_min);tr.appendChild(bar)});
+      if(nowIn){const nl=document.createElement("div");nl.className="now-line";nl.style.left=nowPct+"%";tr.appendChild(nl);
+        if(!firstNow){const nd=document.createElement("div");nd.className="now-dot";nd.style.left=nowPct+"%";tr.appendChild(nd);firstNow=true}}
       r.append(l,tr);G.appendChild(r)});
     const L=$("dayList");L.hidden=!adminKey;L.textContent="";
     if(adminKey)[...list].sort((a,b)=>a.start_min-b.start_min).forEach(b=>L.appendChild(itemRow(b,false)));
@@ -829,11 +887,18 @@ const SUPABASE_JS  = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3
     try{localStorage.setItem("s52name",name)}catch(e){}
     $("book").disabled=true;setStatus("Wird gebucht …");
     try{
-      const res=await rpc("book",{p_day:day,p_seat:k,p_name:name,p_start:start,p_end:end});
+      const args={p_day:day,p_seat:k,p_name:name,p_start:start,p_end:end};
+      if(k!=="sofa"&&isWeekend(day)&&beans)args.p_beans=beans;
+      let res;
+      try{res=await rpc("book",args)}
+      catch(e){ // Datenbank noch ohne Bohnen-Update: ohne Bohnen nochmal
+        if(args.p_beans&&e&&(e.code==="PGRST202"||/p_beans|function/i.test(e.message||""))){delete args.p_beans;res=await rpc("book",args)}else throw e}
       const row=Array.isArray(res)?res[0]:res;
       mine[row.id]=row.cancel_token;setStore("s52tokens",mine);
+      justBooked=k;justId=row.id;
       await load();
-      setStatus("Gebucht: "+lbl(k)+", "+WD[isoDow(day)-1]+" "+dm(day)+", "+fmt(start)+"–"+fmt(end)+".","ok");
+      setStatus("Gebucht: "+lbl(k)+", "+WD[isoDow(day)-1]+" "+dm(day)+", "+fmt(start)+"–"+fmt(end)+(args.p_beans?", Bohnen aus "+(beans==="indien"?"Indien":"Honduras"):"")+".","ok");
+      setTimeout(()=>{justBooked=null;justId=null},2400);
     }catch(e){setStatus(errText(e),"err");await load()}
   };
   $("name").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("name").blur()}});
@@ -884,6 +949,7 @@ const SUPABASE_JS  = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3
     ws.forEach(w=>{const e=document.createElement("span");e.className="win"+(cur===w?" cur":"");e.textContent=fmt(w[0])+"–"+fmt(w[1]);W.appendChild(e)});
   }
   machine();setInterval(machine,30000);
+  setInterval(()=>{if(day===today&&!document.hidden)renderOverview()},60000);
 
   // ---------- Hausregeln: am Desktop immer offen ----------
   const wide=matchMedia("(min-width:1080px)");
