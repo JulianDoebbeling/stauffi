@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Stauffacher 52</title>
 <meta name="robots" content="noindex">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'><style>.b{fill:%23141414}@media%20(prefers-color-scheme:dark){.b{fill:%23ececee}}</style><rect%20x='10'%20y='12'%20width='44'%20height='30'%20rx='4'%20fill='%232742c7'/><rect%20x='14'%20y='16'%20width='36'%20height='22'%20rx='1.5'%20fill='%23e8ecfb'/><path%20d='M17%2030h6M17%2025h14M17%2020h10'%20stroke='%232742c7'%20stroke-width='2.5'%20stroke-linecap='round'/><path%20class='b'%20d='M4%2046h56l-4%206H8z'/></svg>">
+<script>try{var t=localStorage.getItem("s52theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
 <style>
@@ -13,7 +15,7 @@
   --bg:#ffffff; --fg:#141414; --muted:#6b6b72; --faint:#9c9ca4; --line:#e6e6ea; --soft:#f5f5f7;
   --accent:#2742c7; --accent-soft:#e8ecfb; --taken:#d6d6dc; --part:#c9d2f5;
   --ok:#1f7a4a; --ok-soft:#e5f3eb; --off:#a3342b; --off-soft:#f8e9e7; --warn:#8a5200; --warn-soft:#fdf3e1;
-  --sofa:#efe9e1; --sofa-line:#8f8172;
+  --sofa:#efe9e1; --sofa-line:#8f8172; --coffee:#5a3620; --crema:#c48a52; --steel:#b9bcc4;
   --sans:"Geist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
   --mono:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
 }
@@ -21,12 +23,12 @@
   --bg:#111113; --fg:#ececee; --muted:#9a9aa2; --faint:#6c6c74; --line:#2a2a2f; --soft:#1a1a1e;
   --accent:#8ea0ff; --accent-soft:#232a4a; --taken:#3a3a41; --part:#2f3866;
   --ok:#5fcf8f; --ok-soft:#16291e; --off:#f08a80; --off-soft:#331b19; --warn:#f0b75a; --warn-soft:#3a2d14;
-  --sofa:#2a2622; --sofa-line:#a89a8a; color-scheme:dark}}
+  --sofa:#2a2622; --sofa-line:#a89a8a; --coffee:#8a5634; --crema:#d9a46c; --steel:#5d6068; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#111113; --fg:#ececee; --muted:#9a9aa2; --faint:#6c6c74; --line:#2a2a2f; --soft:#1a1a1e;
   --accent:#8ea0ff; --accent-soft:#232a4a; --taken:#3a3a41; --part:#2f3866;
   --ok:#5fcf8f; --ok-soft:#16291e; --off:#f08a80; --off-soft:#331b19; --warn:#f0b75a; --warn-soft:#3a2d14;
-  --sofa:#2a2622; --sofa-line:#a89a8a; color-scheme:dark}
+  --sofa:#2a2622; --sofa-line:#a89a8a; --coffee:#8a5634; --crema:#d9a46c; --steel:#5d6068; color-scheme:dark}
 
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 var(--sans);
@@ -51,6 +53,44 @@ button{font:inherit;color:inherit}
 
 /* ---------- info column ---------- */
 .brand{display:flex;flex-direction:column;gap:4px}
+.brand-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.theme-btn{flex:none;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--bg);color:var(--fg);
+  display:grid;place-items:center;cursor:pointer}
+.theme-btn:hover{background:var(--soft)}
+.theme-btn svg{width:18px;height:18px}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.ico{width:26px;height:26px;flex:none}
+.coffee .ico{color:var(--muted)}
+.coffee.on .ico{color:var(--ok)}
+.coffee.off .ico{color:var(--off)}
+.rules .ico{color:var(--warn)}
+.coffee .steam{opacity:0}
+.coffee.on .steam{opacity:.9}
+/* weekend: a cup in front of every coffee spot */
+.cups .cup{fill:var(--bg);stroke:var(--fg);stroke-width:1.3}
+.cups .cup-h{fill:none;stroke:var(--fg);stroke-width:1.3}
+.cups .saucer{stroke:var(--fg);stroke-width:1.3;stroke-linecap:round}
+.cups .coffee-top{fill:var(--coffee)}
+.cups .crema{fill:var(--crema)}
+.cups .wisp{fill:none;stroke:var(--faint);stroke-width:1.3;stroke-linecap:round;opacity:.7}
+@media (prefers-reduced-motion:no-preference){
+  .cups .wisp{animation:wisp 3.2s ease-out infinite;opacity:0}
+  .coffee.on .steam path{animation:steam 2.4s ease-in-out infinite}
+  .coffee.on .steam path:nth-child(2){animation-delay:.6s}
+}
+.cups .lap-body{fill:var(--steel);stroke:var(--fg);stroke-width:1.2}
+.cups .lap-display{fill:var(--accent-soft)}
+.cups .lap-line{stroke:var(--accent);stroke-width:1.4;stroke-linecap:round}
+.cups .lap-cursor{fill:var(--accent)}
+.cups .prop{transform-box:fill-box;transform-origin:50% 100%}
+@media (prefers-reduced-motion:no-preference){
+  .cups .prop{animation:pop .28s cubic-bezier(.3,1.4,.6,1)}
+  .cups .lap-cursor{animation:blink 1s steps(1) infinite}
+}
+@keyframes pop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
+@keyframes blink{50%{opacity:0}}
+@keyframes wisp{0%{opacity:0;transform:translateY(3px)}30%{opacity:.85}80%,100%{opacity:0;transform:translateY(-7px)}}
+@keyframes steam{0%,100%{transform:translateY(1px);opacity:.4}50%{transform:translateY(-1.5px);opacity:1}}
 .card{border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
 .coffee{background:var(--soft);border-color:transparent}
 .coffee.on{background:var(--ok-soft)}
@@ -179,13 +219,26 @@ dialog p{color:var(--muted)}
   <!-- ===== Info ===== -->
   <aside class="col info">
     <div class="brand">
-      <h1>Stauffacher 52</h1>
-      <p class="muted">Homeoffice in Zürich Wiedikon. Freunde dürfen vorbeikommen und hier arbeiten.</p>
+      <div class="brand-top">
+        <h1>Stauffacher 52</h1>
+        <button class="theme-btn" id="themeBtn" type="button" aria-label="Dunkler Modus" title="Dunkler Modus">
+          <svg id="themeIco" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>
+        </button>
+      </div>
+      <p class="muted">Homeoffice in Zürich Wiedikon. Freunde dürfen hier vorbeikommen, arbeiten und guten Kaffee geniessen.</p>
       <p class="mono" style="font-size:.8125rem">Stauffacherstrasse 52, Zürich</p>
     </div>
 
     <section class="card coffee" id="coffee" aria-labelledby="h-coffee">
-      <h2 id="h-coffee">Kaffee</h2>
+      <div class="card-head">
+        <h2 id="h-coffee">Kaffee</h2>
+        <svg class="ico" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <g class="steam"><path d="M12 4c-1.5 2 1.5 3 0 5"/><path d="M17 4c-1.5 2 1.5 3 0 5"/></g>
+          <path d="M6 13h17v6a7 7 0 0 1-7 7h-3a7 7 0 0 1-7-7z"/>
+          <path d="M23 15h2a3 3 0 0 1 0 6h-2.5"/>
+          <path d="M4 29h21"/>
+        </svg>
+      </div>
       <div class="coffee-now">
         <span class="pulse" aria-hidden="true"></span>
         <div>
@@ -203,13 +256,21 @@ dialog p{color:var(--muted)}
     </section>
 
     <section class="card rules" aria-labelledby="h-rules">
-      <h2 id="h-rules">Hausregeln</h2>
+      <div class="card-head">
+        <h2 id="h-rules">Hausregeln</h2>
+        <svg class="ico" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 15 16 5l12 10"/>
+          <path d="M7 13v14h18V13"/>
+          <path d="M13 27v-7h6v7"/>
+          <path d="M22 7V4h3v5.5"/>
+        </svg>
+      </div>
       <ul>
-        <li><b>Di–Fr</b><span>Arbeitsplätze 08:30–16:00, max. 8 Std.</span></li>
+        <li><b>Di–Fr</b><span>Arbeitsplätze 08:30–16:00</span></li>
         <li><b>Sa–So</b><span>Nur Kaffee-Spots, 11:00–15:00</span></li>
         <li><b>Montag</b><span>Ausgebucht, Julian ist in Bern</span></li>
         <li><b>Vorlauf</b><span>Bis drei Wochen im Voraus</span></li>
-        <li><b>Sofa</b><span>Nur Sandro Ganter, Nap max. 1 Std., Di–Fr</span></li>
+        <li><b>Sofa</b><span>Nur Sandro Gantner, Nap max. 1 Std., Di–Fr</span></li>
         <li><b>Tim</b><span>Tim Wünsch: Hausverbot bei unangekündigtem Besuch oder über 30 Min. Verspätung</span></li>
       </ul>
     </section>
@@ -237,6 +298,7 @@ dialog p{color:var(--muted)}
         <svg viewBox="0 -8 560 338" role="group" aria-label="Raumplan mit Tisch, sechs Plätzen und Sofa">
           <rect class="tbl" x="120" y="62" width="280" height="100" rx="4"/>
           <text class="tbl-label" x="260" y="117" text-anchor="middle" id="tblLabel">Tisch</text>
+          <g id="cups" class="cups" aria-hidden="true"></g>
           <g id="spots"></g>
         </svg>
         <div class="legend">
@@ -387,7 +449,7 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
     });
   }
   const sofaPopup=()=>ask("Das Sofa ist für Sandro reserviert",
-    "Nur Sandro Ganter kann das Sofa für einen Nap von höchstens 1 Stunde buchen. Trag deinen Namen ein oder wähl einen Platz am Tisch.",
+    "Nur Sandro Gantner kann das Sofa für einen Nap von höchstens 1 Stunde buchen. Trag deinen Namen ein oder wähl einen Platz am Tisch.",
     [{label:"Verstanden",value:true,primary:true}]);
   const timPopup=()=>ask("Hallo Tim",
     "Bitte sei pünktlich. Bei unangekündigten Besuchen oder mehr als 30 Minuten Verspätung gilt Hausverbot.",
@@ -434,9 +496,35 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
     svg("rect",{class:"shape",x:x+arm+8+cw,y:cy,width:cw,height:ch,rx:7},el); // Kissen 2
     svg("text",{class:"lab",x:x+w/2,y:cy+ch/2+5,"text-anchor":"middle"},el).textContent="Sofa";
   }
+  // Tasse (Wochenende) oder Laptop (Werktag) am gewählten Platz
+  const PROP_POS={"1":[200,86],"2":[320,86],"3":[372,114],"4":[320,144],"5":[200,144],"6":[148,114]};
+  let propKey=null;
+  function drawProp(we){
+    const key=(sel&&PROP_POS[sel])?(we?"cup":"lap")+sel:"";
+    if(key===propKey)return;propKey=key;
+    const g=$("cups");g.textContent="";if(!key)return;
+    const [x,y]=PROP_POS[sel];
+    const t=svg("g",{transform:"translate("+x+" "+y+") scale(1.35)"},g);
+    const c=svg("g",{class:"prop"},t);
+    if(we){
+      svg("line",{class:"saucer",x1:-11,y1:11,x2:11,y2:11},c);
+      svg("path",{class:"cup",d:"M-8 -2 H8 L6.5 9 H-6.5 Z"},c);
+      svg("path",{class:"cup-h",d:"M7.6 0.5 q5 0 5 3.6 q0 3.6 -6 3.6"},c);
+      svg("rect",{class:"crema",x:-7.2,y:-1.2,width:14.4,height:2.2,rx:1},c);
+      [-3,3].forEach((dx,j)=>{const w=svg("path",{class:"wisp",d:"M"+dx+" -5 q-2 -3 0 -6 q2 -3 0 -6"},c);w.style.animationDelay=(j*0.6)+"s"});
+    }else{
+      svg("rect",{class:"lap-body",x:-11,y:-9,width:22,height:15,rx:2},c);
+      svg("rect",{class:"lap-display",x:-9,y:-7,width:18,height:11,rx:.8},c);
+      svg("line",{class:"lap-line",x1:-6.5,y1:-4,x2:2,y2:-4},c);
+      svg("line",{class:"lap-line",x1:-6.5,y1:-.8,x2:-1,y2:-.8},c);
+      svg("rect",{class:"lap-cursor",x:0.5,y:-2.2,width:1.6,height:3},c);
+      svg("path",{class:"lap-body",d:"M-14 6.5 H14 L12 10 H-12 Z"},c);
+    }
+  }
   function renderPlan(){
     const we=isWeekend(day);
     $("tblLabel").textContent=we?"Kaffee":"Tisch";
+    drawProp(we);
     $("planSub").textContent=we?"Kaffee-Spot antippen":"Platz oder Sofa antippen";
     const g=$("spots");g.textContent="";
     SPOTS.forEach(s=>{
@@ -469,7 +557,7 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
     $("panel").setAttribute("aria-disabled",String(!sel));
     $("panelTitle").textContent=sel?lbl(sel)+(day?", "+WD[isoDow(day)-1]+" "+dm(day):""):"Noch kein Platz gewählt";
     const span=fmt(OPEN)+"–"+fmt(CLOSE);
-    $("panelRule").textContent=sel==="sofa"?"Nap, höchstens 1 Stunde":!sel?"Wähl einen Platz im Plan.":isWeekend(day)?"Kaffee-Spot, "+span:span+", höchstens 8 Stunden";
+    $("panelRule").textContent=sel==="sofa"?"Nap, höchstens 1 Stunde":!sel?"Wähl einen Platz im Plan.":isWeekend(day)?"Kaffee-Spot, "+span:"Arbeitsplatz, "+span;
     $("sofaNote").hidden=sel!=="sofa";
     $("weNote").hidden=!isWeekend(day);
     const S=$("slots");S.textContent="";
@@ -617,6 +705,18 @@ const SUPABASE_KEY = "sb_publishable_f7HVxJEgExsd_tMUGEbXxg_YERXp6X1";
   function goWeek(n){setWeek(n);day=week.find(bookable)||null;sel=null;list=forDayFromWeek();$("status").textContent="";renderAll()}
   $("prevWeek").onclick=()=>{if(wk>0)goWeek(wk-1)};
   $("nextWeek").onclick=()=>{if(wk<WEEKS-1)goWeek(wk+1)};
+
+  // ---------- hell / dunkel ----------
+  const MOON='<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>';
+  const SUN='<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
+  const mq=window.matchMedia?matchMedia("(prefers-color-scheme: dark)"):null;
+  const isDark=()=>{const t=document.documentElement.getAttribute("data-theme");return t?t==="dark":!!(mq&&mq.matches)};
+  function paintTheme(){const d=isDark();$("themeIco").innerHTML=d?SUN:MOON;
+    const l=d?"Heller Modus":"Dunkler Modus";$("themeBtn").setAttribute("aria-label",l);$("themeBtn").title=l}
+  $("themeBtn").onclick=()=>{const t=isDark()?"light":"dark";document.documentElement.setAttribute("data-theme",t);
+    try{localStorage.setItem("s52theme",t)}catch(e){}paintTheme()};
+  if(mq&&mq.addEventListener)mq.addEventListener("change",paintTheme);
+  paintTheme();
 
   renderAll();load();
   setInterval(()=>{if(!document.hidden&&!$("dlg").open)load()},30000);
